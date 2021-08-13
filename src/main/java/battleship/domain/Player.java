@@ -92,13 +92,10 @@ public class Player {
         final int LEFT = 2;
         final int RIGHT = 3;
 
-
-
         Point returnPoint = null;
         int shot;
 
         while (true) {
-
             System.out.println("ai " + aiStatus);
 
             switch (aiStatus) {
@@ -213,7 +210,6 @@ public class Player {
                         if (shot == Board.MISS || shot == Board.AI) {
                             break;
                         }
-
                     }
                 {
                     // NB delete this code!
@@ -257,29 +253,29 @@ public class Player {
                 case 3:  // skib v -  sidste træf var ned
                     System.out.println("case 3");
 
-                    if (lastHit.x == 9) {// vi er nederst på pladen, prøv op i stedet.
+                    if (lastHit.x == 9) {
                         aiStatus = 2;
                         break;
                     }
 
-                    returnPoint = new Point(lastHit.x + 1, lastHit.y); // finder punkt 1 ned
-                    shot = playerBoard.getValue(returnPoint); // finder værdi i 1 ned (x+1)
+                    returnPoint = new Point(lastHit.x + 1, lastHit.y);
+                    shot = playerBoard.getValue(returnPoint);
 
                     if (shot == Board.EMPTY) {
-                        aiStatus = 2; // missed skud, prøv opad næste gang
+                        aiStatus = 2;
                         return returnPoint;
                     }
 
-                    if (shot == Board.SHIP) { // fortsætte med at ramme næste skud i denne retning
+                    if (shot == Board.SHIP) {
                         return returnPoint;
                     }
 
-                    if (shot == Board.HIT) { // hvis vi rammer et flet der allerede er ramt, er det fordi vi har vendt om og skal fortsætte i samme retning
+                    if (shot == Board.HIT) {
                         lastHit.x = lastHit.x + 1;
                         break;
                     }
 
-                    if (shot == Board.MISS || shot == Board.AI) { // tidligere skudt, eller ikke en mulighed, prøv opdad!
+                    if (shot == Board.MISS || shot == Board.AI) {
                         aiStatus = 2;
                         break;
                     }
@@ -287,68 +283,67 @@ public class Player {
                 case 4: // skib h -  sidste træf var venstre
                     System.out.println("case 4");
 
-                    if (lastHit.y == 0) { // vi er tv på pladen, prøv højre i stedet.
+                    if (lastHit.y == 0) {
                         aiStatus = 5;
                         break;
                     }
 
-                    returnPoint = new Point(lastHit.x, lastHit.y - 1); // finder punkt 1 tv
-                    shot = playerBoard.getValue(returnPoint); // finder værdi i 1 tv (y-1)
+                    returnPoint = new Point(lastHit.x, lastHit.y - 1);
+                    shot = playerBoard.getValue(returnPoint);
 
                     if (shot == Board.EMPTY) {
-                        aiStatus = 5; // missed skud, prøv th næste gang
+                        aiStatus = 5;
                         return returnPoint;
                     }
 
-                    if (shot == Board.SHIP) { // fortsætte med at ramme næste skud i denne retning
+                    if (shot == Board.SHIP) {
                         return returnPoint;
                     }
 
-                    if (shot == Board.HIT) { // hvis vi rammer et flet der allerede er ramt, er det fordi vi har vendt om og skal fortsætte i samme retning
+                    if (shot == Board.HIT) {
                         lastHit.y = lastHit.y - 1;
                         break;
                     }
 
-                    if (shot == Board.MISS || shot == Board.AI) { // tidligere skudt, eller ikke en mulighed, prøv th!
+                    if (shot == Board.MISS || shot == Board.AI) {
                         aiStatus = 5;
                         break;
                     }
 
-                    // skib h -  sidste træf var højre
-                case 5:
+
+                case 5: // skib horisontalt -  sidste træf var højre
                     System.out.println("case 5");
 
                     if (lastHit.y == 9) {
-                        aiStatus = 4; // vi er th på pladen, prøv venstre i stedet.
+                        aiStatus = 4;
                         break;
                     }
 
-                    returnPoint = new Point(lastHit.x, lastHit.y + 1); // finder punkt 1 th
+                    returnPoint = new Point(lastHit.x, lastHit.y + 1);
 
-                    shot = playerBoard.getValue(returnPoint); // finder værdi i 1 th (y+1)
+                    shot = playerBoard.getValue(returnPoint);
 
                     if (shot == Board.EMPTY) {
-                        aiStatus = 4; // missed skud, prøv th næste gang
+                        aiStatus = 4;
                         return returnPoint;
                     }
 
-                    if (shot == Board.SHIP) { // fortsætte med at ramme næste skud i denne retning
+                    if (shot == Board.SHIP) {
                         return returnPoint;
                     }
 
-                    if (shot == Board.HIT) { // hvis vi rammer et flet der allerede er ramt, er det fordi vi har vendt om og skal fortsætte i samme retning
+                    if (shot == Board.HIT) {
                         lastHit.y = lastHit.y + 1;
                         break;
                     }
 
-                    if (shot == Board.MISS || shot == Board.AI) { // tidligere skudt, eller ikke en mulighed, prøv th!
+                    if (shot == Board.MISS || shot == Board.AI) {
                         aiStatus = 5;
                         break;
                     }
             }
         }
     }
-
 
     public int saveHit(Point point) {
         // gennemløber alle skibe, og ser om punktet er indeholdt i dem,
@@ -367,6 +362,42 @@ public class Player {
             if (!ship[i].isSunk()) return false;
         }
         return true;
+    }
+
+    public void aiMarkingsWhenSunk(int shipNr) {
+        // indsætter 4'taller rundt om skib, der hvor der ikke er 3-taller
+        Point shipPos = ship[shipNr].getPosition();
+
+        for (int i = 0; i < ship[shipNr].getLength(); i++) {
+            if (ship[shipNr].isHorizontal()) {
+                shipPos.y = ship[shipNr].getPosition().y + i;
+            }
+
+            if (!ship[shipNr].isHorizontal()) {
+                shipPos.x = ship[shipNr].getPosition().x + i;
+            }
+
+            // kører rund om punkt
+            for (int j = -1; j < 2; j++) {
+                // y konstant x flytter
+                setAiIfEmpty(new Point(shipPos.x + j, shipPos.y));
+                // y-1
+                setAiIfEmpty(new Point(shipPos.x + j, shipPos.y - 1));
+                // y +1
+                setAiIfEmpty(new Point(shipPos.x + j, shipPos.y + 1));
+            }
+
+        }
+    }
+
+    private void setAiIfEmpty(Point point) {
+        if (point.x >= 0 && 9 >= point.x &&
+                point.y >= 0 && point.y <= 9) {
+
+            if (grid.getValue(point) == 0) {
+                grid.setValue(point, 4);
+            }
+        }
     }
 
     // Getter & Setters

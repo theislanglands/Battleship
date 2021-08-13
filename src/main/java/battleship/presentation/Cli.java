@@ -198,6 +198,8 @@ public class Cli {
                     if (sunkenShip > -1) {
                         System.out.println("You have sunk your opponents " + GAME.player[0].getShip()[sunkenShip].getName());
                         GAME.player[1].setAiStatus(0); // indstiller til random shot.
+                        // skal indstille AI rund om skibet til 4!, hvis de ikke allerede er 3!
+                        GAME.player[0].aiMarkingsWhenSunk(sunkenShip);
                     }
                 }
 
