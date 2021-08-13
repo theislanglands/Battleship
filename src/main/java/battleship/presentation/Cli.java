@@ -8,7 +8,6 @@ import java.util.Scanner;
 
 
 // TODO hvisning af bræt, modstander - etc! ting der skal udelades
-// TODO implementer AI - hvis der er træf!
 
 public class Cli {
 
@@ -177,7 +176,7 @@ public class Cli {
                     shotPoint = GAME.player[1].aiShot(GAME.player[0].getGrid());
                     shotValue = GAME.player[0].getGrid().getValue(shotPoint);
 
-                System.out.println("/nComputer Skyder på " + shotPoint); // transform to battlehip A-J
+                System.out.println("\nComputer Skyder på " + transformToCoordinate(shotPoint));
 
                 if (shotValue == Board.EMPTY) {
                     System.out.println("SPLASH!");
@@ -192,9 +191,7 @@ public class Cli {
                     // indstil aiStatus ved første hit, og gemmer punktet!
                     if (GAME.player[1].getAiStatus() == 0) {
                         GAME.player[1].setAiStatus(1);
-                        GAME.player[1].setFirstHit(shotPoint);
                     }
-
 
                     int sunkenShip = GAME.player[0].saveHit(shotPoint);
 
@@ -209,8 +206,8 @@ public class Cli {
             // print boards
             System.out.println("\t     Player\n");
             System.out.println(GAME.player[0].getGrid());
-            System.out.println("\t     Computer\n");
-            System.out.println(GAME.player[1].getGrid());
+            // System.out.println("\t     Computer\n");
+            // System.out.println(GAME.player[1].getGrid());
 
             // checker om der er en vinder
             if ( GAME.player[1].allSunk() ) winner = 0;
@@ -251,6 +248,13 @@ public class Cli {
         else yPos = (int) -49 + input.charAt(1);
 
         return new Point (xPos, yPos);
+    }
+
+    public static String transformToCoordinate(Point point) {
+        String result;
+        result = Character.toString(65+point.x);
+        result += point.y + 1;
+        return result;
     }
 
     private boolean checkValidInput(String input) {
