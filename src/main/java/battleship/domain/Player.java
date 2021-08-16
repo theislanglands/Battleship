@@ -96,12 +96,12 @@ public class Player {
         int shot;
 
         while (true) {
-            System.out.println("ai " + aiStatus);
+            // System.out.println("ai " + aiStatus);
 
             switch (aiStatus) {
 
                 case 0: // intet ramt, tilfældigt skud
-                    System.out.println("case 0");
+                    // System.out.println("case 0");
                     do {
                         // skyder på tilfældigt punkt
                         returnPoint = randomShot();
@@ -112,12 +112,12 @@ public class Player {
                     return returnPoint;
 
                 case 1:// Et skib lige ramt, og retning skal estableres
-                    System.out.println("case 1");
+                    // System.out.println("case 1");
 
                     // skyder i tilfældig retning ud fra hit!
                     int randomDirection = (int) (Math.random() * 4);
 
-                    System.out.println("random direction " + randomDirection);
+                    // System.out.println("random direction " + randomDirection);
 
                     if (randomDirection == UP) {
 
@@ -213,14 +213,14 @@ public class Player {
                     }
                 {
                     // NB delete this code!
-                    System.out.println(returnPoint);
+                    //System.out.println(returnPoint);
                     System.out.println("reached end of case 1! - some bug?");
                     break;
                 }
 
 
                 case 2: // skib vertikal - skyd op
-                    System.out.println("case 2");
+                    // System.out.println("case 2");
 
                     if (lastHit.x == 0) {
                         aiStatus = 3; // vi er øverst på pladen, prøv ned i stedet.
@@ -251,7 +251,7 @@ public class Player {
                     }
 
                 case 3:  // skib v -  sidste træf var ned
-                    System.out.println("case 3");
+                    // System.out.println("case 3");
 
                     if (lastHit.x == 9) {
                         aiStatus = 2;
@@ -281,7 +281,7 @@ public class Player {
                     }
 
                 case 4: // skib h -  sidste træf var venstre
-                    System.out.println("case 4");
+                    // System.out.println("case 4");
 
                     if (lastHit.y == 0) {
                         aiStatus = 5;
@@ -312,7 +312,7 @@ public class Player {
 
 
                 case 5: // skib horisontalt -  sidste træf var højre
-                    System.out.println("case 5");
+                    // System.out.println("case 5");
 
                     if (lastHit.y == 9) {
                         aiStatus = 4;
@@ -368,6 +368,7 @@ public class Player {
         // indsætter 4'taller rundt om skib, der hvor der ikke er 3-taller
         Point shipPos = ship[shipNr].getPosition();
 
+        // flytter punkt vertikalt eller horisontalt!
         for (int i = 0; i < ship[shipNr].getLength(); i++) {
             if (ship[shipNr].isHorizontal()) {
                 shipPos.y = ship[shipNr].getPosition().y + i;
@@ -376,6 +377,7 @@ public class Player {
             if (!ship[shipNr].isHorizontal()) {
                 shipPos.x = ship[shipNr].getPosition().x + i;
             }
+
 
             // kører rund om punkt
             for (int j = -1; j < 2; j++) {
@@ -386,7 +388,6 @@ public class Player {
                 // y +1
                 setAiIfEmpty(new Point(shipPos.x + j, shipPos.y + 1));
             }
-
         }
     }
 

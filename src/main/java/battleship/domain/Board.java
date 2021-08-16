@@ -19,7 +19,8 @@ Board for battleship
 
 public class Board {
 
-    int[][] grid = new int[10][10];
+    private int gridSize;
+    int[][] grid;
 
     // constants for fields in board status
     public final static int EMPTY = 0;
@@ -29,6 +30,12 @@ public class Board {
     public final static int AI = 4;
 
     public Board() {
+        gridSize = 10;
+        grid = new int[gridSize][gridSize];
+    }
+
+    public Board(int gridSize){
+        grid = new int[gridSize][gridSize];
     }
 
     public int getValue(Point p) {
@@ -42,6 +49,81 @@ public class Board {
     public void clearBoard(){
         this.grid = new int[10][10];
     }
+
+    public int getGridSize() {
+        return gridSize;
+    }
+
+    public void setGridSize(int gridSize) {
+        this.gridSize = gridSize;
+    }
+
+    public String printShipsAndHits(){
+
+        String result = "\t\t";
+        String symbol;
+
+        // adds 1-10
+        for (int i = 1; i <= 10; i++) {
+            result += (i + " ");
+        }
+        result += "\n";
+
+        // adds rows
+        for (int i = 0; i < 10; i++) {                      // rows i
+            result += "\t" + (char) (65 + i) + "\t";        // letters A-J
+            for (int j = 0; j < 10; j++) {
+                symbol = " ";
+
+                if (grid[i][j] == SHIP) {
+                    symbol = "H";
+                }
+                if (grid[i][j] == HIT) {
+                    symbol = "X";
+                }
+                if (grid[i][j] == MISS) {
+                    symbol= "O";
+                }
+
+                result += symbol + " ";            // content of point
+            }
+            result += "\n";
+        }
+
+        return result;
+    }
+
+    public String printShots(){
+        String result = "\t\t";
+        String symbol;
+
+        // adds 1-10
+        for (int i = 1; i <= 10; i++) {
+            result += (i + " ");
+        }
+        result += "\n";
+
+        // adds rows
+        for (int i = 0; i < 10; i++) {                      // rows i
+            result += "\t" + (char) (65 + i) + "\t";        // letters A-J
+            for (int j = 0; j < 10; j++) {
+                symbol = " ";
+
+                if (grid[i][j] == HIT) {
+                    symbol = "X";
+                }
+                if (grid[i][j] == MISS) {
+                    symbol= "O";
+                }
+
+                result += symbol + " ";            // content of point
+            }
+            result += "\n";
+        }
+
+        return result;
+    }
+
 
     @Override
     public String toString() {

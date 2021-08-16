@@ -57,7 +57,7 @@ public class Cli {
 
                 while (!validInput) {
 
-                    System.out.println(GAME.player[0].getGrid());
+                    System.out.println(GAME.player[0].getGrid().printShipsAndHits());
 
                     System.out.print("\nPlace your " + GAME.player[0].getShip()[i].getName() +
                             " with length " + GAME.player[0].getShip()[i].getLength() +
@@ -93,7 +93,7 @@ public class Cli {
             }
         }
 
-        System.out.println(GAME.player[0].getGrid());
+        System.out.println(GAME.player[0].getGrid().printShipsAndHits());
     }
 
     private int startRounds() {
@@ -108,13 +108,15 @@ public class Cli {
             Point shotPoint = null;
 
 
-            System.out.print("Round " + GAME.getRound() +
-                            "\nPlayer; " + GAME.player[playerTurn].getName() + "'s turn\n\n" );
+            System.out.println("Round " + GAME.getRound() + " "
+                             + GAME.player[playerTurn].getName() + "'s turn" );
 
             // spillers tur
             if (playerTurn == 0) {
 
                 // Placerer skud menneske (metode i spiller?
+                System.out.println("Your Shots");
+                System.out.println(GAME.player[1].getGrid().printShots());
                 System.out.print("place your shot? ");
 
                 boolean correctShot = false;
@@ -152,13 +154,13 @@ public class Cli {
 
                 // tjekker om der rammes forbi
                 if (shotValue == Board.EMPTY) {
-                    System.out.println("SPLASH!!");
+                    System.out.println("**  SPLASH!!  **");
                     GAME.player[1].getGrid().setValue(shotPoint, Board.MISS);
                 }
 
                 // tjekker om der rammes
                 if (shotValue == Board.SHIP) {
-                    System.out.println("BANG");
+                    System.out.println("**  BANG  **");
                     GAME.player[1].getGrid().setValue(shotPoint, Board.HIT);
                     int sunkenShip = GAME.player[1].saveHit(shotPoint);
                     if (sunkenShip > -1) {
@@ -176,15 +178,15 @@ public class Cli {
                     shotPoint = GAME.player[1].aiShot(GAME.player[0].getGrid());
                     shotValue = GAME.player[0].getGrid().getValue(shotPoint);
 
-                System.out.println("\nComputer Skyder på " + transformToCoordinate(shotPoint));
+                System.out.println("Computer shoots at: " + transformToCoordinate(shotPoint));
 
                 if (shotValue == Board.EMPTY) {
-                    System.out.println("SPLASH!");
+                    System.out.println("** SPLASH!  **");
                     GAME.player[0].getGrid().setValue(shotPoint, Board.MISS);
                 }
 
                 if (shotValue == Board.SHIP) {
-                    System.out.println("BANG!");
+                    System.out.println("** BANG!  **");
                     GAME.player[0].getGrid().setValue(shotPoint, Board.HIT);
                     GAME.player[1].setLastHit(shotPoint);
 
@@ -197,19 +199,18 @@ public class Cli {
 
                     if (sunkenShip > -1) {
                         System.out.println("You have sunk your opponents " + GAME.player[0].getShip()[sunkenShip].getName());
-                        GAME.player[1].setAiStatus(0); // indstiller til random shot.
+                        // indstiller til random shot.
+                        GAME.player[1].setAiStatus(0);
                         // skal indstille AI rund om skibet til 4!, hvis de ikke allerede er 3!
                         GAME.player[0].aiMarkingsWhenSunk(sunkenShip);
                     }
                 }
 
-            } // end computer turn
+                System.out.println("Your ships");
+                System.out.println(GAME.player[0].getGrid().printShipsAndHits());
 
-            // print boards
-            System.out.println("\t     Player\n");
-            System.out.println(GAME.player[0].getGrid());
-            // System.out.println("\t     Computer\n");
-            // System.out.println(GAME.player[1].getGrid());
+
+            } // end computer turn
 
             // checker om der er en vinder
             if ( GAME.player[1].allSunk() ) winner = 0;
