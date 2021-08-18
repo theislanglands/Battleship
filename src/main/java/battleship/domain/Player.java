@@ -4,6 +4,9 @@ import java.awt.*;
 
 public class Player {
 
+    final public static int PLAYER = 0;
+    final public static int COMPUTER = 1;
+
     // evt Lav Player som superclass med computer og menneske som underklasse evt?
     String name;
     boolean human;
@@ -27,15 +30,17 @@ public class Player {
     public Player(boolean human) {
         this.human = human;
 
+        generateShips();
+
         if (human) {
             this.name = "no name";
         }
 
         if (!human) {
             this.name = "computer";
+            randomShipPlacement();
         }
 
-        generateShips();
     }
 
     private void generateShips() {
@@ -87,6 +92,7 @@ public class Player {
 
     public Point aiShot(Board playerBoard) {
 
+        System.out.println("aiStatus " + aiStatus);
         final int UP = 0;
         final int DOWN = 1;
         final int LEFT = 2;
@@ -107,6 +113,10 @@ public class Player {
                         returnPoint = randomShot();
                         // henter værdien af tilfældigt punkt på spillers plade
                         shot = playerBoard.getValue(returnPoint);
+                        if (shot == Board.SHIP) {
+                            aiStatus = 1;
+                            lastHit = returnPoint;
+                        }
                     } while (shot >= 2);
 
                     return returnPoint;

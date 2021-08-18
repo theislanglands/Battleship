@@ -38,11 +38,8 @@ public class Cli {
 
     private void placeShips() {
 
-        // Placerer computerens skibe tilfældigt
-        GAME.player[1].randomShipPlacement();
-
         // Help text for placing ships
-        System.out.println("\nhello " + GAME.player[0].getName() +"\n");
+        System.out.println("\nhello " + GAME.player[0].getName() + "\n");
         System.out.println("Place your ships with position and v/h for vertical or horisontal\n "
                 + "ex: b4h, or type R for random placement");
 
@@ -80,9 +77,9 @@ public class Cli {
                 GAME.player[0].getShip()[i].setHorizontal(HorizontalInput(input));
 
                 // Tjekker om skibet kan placeres
-                if (GAME.player[0].getShip()[i].canPlace(transformToPoint(input), GAME.player[0].getGrid())) {
+                if (GAME.player[0].getShip()[i].canPlace(BattleshipGame.transformToPoint(input), GAME.player[0].getGrid())) {
                     // placerer skib
-                    GAME.player[0].getShip()[i].place(GAME.player[0].getGrid(), transformToPoint(input), GAME.player[0].getShip()[i].isHorizontal());
+                    GAME.player[0].getShip()[i].place(GAME.player[0].getGrid(), BattleshipGame.transformToPoint(input), GAME.player[0].getShip()[i].isHorizontal());
                     placedCorrect = true;
                 }
 
@@ -109,7 +106,7 @@ public class Cli {
 
 
             System.out.println("Round " + GAME.getRound() + " "
-                             + GAME.player[playerTurn].getName() + "'s turn" );
+                    + GAME.player[playerTurn].getName() + "'s turn");
 
             // spillers tur
             if (playerTurn == 0) {
@@ -136,9 +133,13 @@ public class Cli {
                         break;
                     }
 
+                    if (winner == 2) break;
+
                     // henter status på punktet på modstanders bræt hvor der skydes
-                    shotPoint = transformToPoint(input);
-                    shotValue = GAME.player[1].getGrid().getValue(shotPoint);
+                    shotPoint = BattleshipGame.transformToPoint(input);
+
+                    //shotValue = GAME.player[1].getGrid().getValue(shotPoint);
+                    shotValue = GAME.placeShot(1, shotPoint);
 
                     // tjekker at der ikke er skudt før på punktet
                     if (shotValue == Board.HIT || shotValue == Board.MISS) {
@@ -146,39 +147,34 @@ public class Cli {
                     } else {
                         correctShot = true;
                     }
-                }
 
-                if (winner == 2) break;
+                    // tjekker om der rammes forbi
+                    if (shotValue == Board.EMPTY) {
+                        System.out.println("**  SPLASH!!  **");
+                    }
 
-                // Dette over i metoede der duer til både computer & human!
+                    // tjekker om der rammes
+                    if (shotValue == Board.SHIP) {
+                        System.out.println("**  BANG  **");
 
-                // tjekker om der rammes forbi
-                if (shotValue == Board.EMPTY) {
-                    System.out.println("**  SPLASH!!  **");
-                    GAME.player[1].getGrid().setValue(shotPoint, Board.MISS);
-                }
-
-                // tjekker om der rammes
-                if (shotValue == Board.SHIP) {
-                    System.out.println("**  BANG  **");
-                    GAME.player[1].getGrid().setValue(shotPoint, Board.HIT);
-                    int sunkenShip = GAME.player[1].saveHit(shotPoint);
-                    if (sunkenShip > -1) {
-                        System.out.println("You have sunk your opponents " + GAME.player[1].getShip()[sunkenShip].getName());
+                        // check sunken ship
+                        int sunkenShip = GAME.player[1].saveHit(shotPoint);
+                        if (sunkenShip > -1) {
+                            System.out.println("You have sunk your opponents " + GAME.player[1].getShip()[sunkenShip].getName());
+                        }
                     }
                 }
             } // slut spillers tur
 
+
             // computer turn
             if (playerTurn == 1) {
 
-                // ingen tidligere træf - skyder tilfældigt!
+                shotPoint = GAME.player[1].aiShot(GAME.player[0].getGrid());
 
-                    // Ai skud ved træf - to DO tjek det her kald!
-                    shotPoint = GAME.player[1].aiShot(GAME.player[0].getGrid());
-                    shotValue = GAME.player[0].getGrid().getValue(shotPoint);
+                System.out.println("Computer shoots at: " + BattleshipGame.transformToCoordinate(shotPoint));
 
-                System.out.println("Computer shoots at: " + transformToCoordinate(shotPoint));
+                shotValue = GAME.player[0].getGrid().getValue(shotPoint);
 
                 if (shotValue == Board.EMPTY) {
                     System.out.println("** SPLASH!  **");
@@ -213,8 +209,8 @@ public class Cli {
             } // end computer turn
 
             // checker om der er en vinder
-            if ( GAME.player[1].allSunk() ) winner = 0;
-            if ( GAME.player[0].allSunk() ) winner = 1;
+            if (GAME.player[1].allSunk()) winner = 0;
+            if (GAME.player[0].allSunk()) winner = 1;
         }
 
         return winner;
@@ -237,29 +233,6 @@ public class Cli {
         return input.toUpperCase().endsWith("H");
     }
 
-    public static Point transformToPoint(String input) {
-        // Omregner input ex b4 til et Point objekt
-
-        int xPos, yPos;
-
-        // beregner x-Pos
-        input = input.toUpperCase();
-        xPos = -65 + (int) input.charAt(0);
-
-        // beregner y-pos
-        if (input.length() == 4) yPos = 9;
-        else yPos = (int) -49 + input.charAt(1);
-
-        return new Point (xPos, yPos);
-    }
-
-    public static String transformToCoordinate(Point point) {
-        String result;
-        result = Character.toString(65+point.x);
-        result += point.y + 1;
-        return result;
-    }
-
     private boolean checkValidInput(String input) {
 
         // tjekker om inpur er "R"
@@ -273,19 +246,17 @@ public class Cli {
 
         // tjekker om input slutter med V eller H
         input = input.toUpperCase();
-        if ( !(input.endsWith("V") || input.endsWith("H")) ) return false;
+        if (!(input.endsWith("V") || input.endsWith("H"))) return false;
 
         // tjekker om input starter med A-J
-        int firstChar = (int) input.charAt(0);
+        int firstChar = input.charAt(0);
         if (65 > firstChar || firstChar > 74) return false;
 
         // tjekker om midten er tal mellem 1 og 9
-        int midChar = (int) -48 + input.charAt(1);
-        if (midChar < 1 || midChar > 9 ) return false;
+        int midChar = -48 + input.charAt(1);
+        if (midChar < 1 || midChar > 9) return false;
 
         // tjekker om midten er 10
-        if (input.length() == 4 && !input.substring(1,3).equals("10") ) return false;
-
-        return true;
+        return input.length() != 4 || input.startsWith("10", 1);
     }
 }
