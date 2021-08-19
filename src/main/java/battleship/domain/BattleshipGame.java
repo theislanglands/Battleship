@@ -8,6 +8,7 @@ public class BattleshipGame {
 
     public static Map<String, Integer> ships = new HashMap<>();
     public static int noOfShips;
+    public static int gridSize = 10;
 
     private int round = 0;
     public Player[] player = new Player[2];
@@ -28,9 +29,13 @@ public class BattleshipGame {
         input = input.toUpperCase();
         xPos = -65 + (int) input.charAt(0);
 
+        /*
         // beregner y-pos
-        if (input.length() == 4) yPos = 9;
+        if (input.length() == 4) yPos = 9; // ved 10!
         else yPos = (int) -49 + input.charAt(1);
+        */
+
+        yPos = Integer.parseInt(input.substring(1,2));
 
         return new Point(xPos, yPos);
     }
@@ -76,17 +81,17 @@ public class BattleshipGame {
     public int placeShot(int playerNr, Point shotPoint) {
         //shot at player playerNr board at a given point
 
-        int shotValue = player[playerNr].getGrid().getValue(shotPoint);
+        int shotValue = player[playerNr].getBoard().getValue(shotPoint);
 
         if (shotValue == Board.EMPTY) {
             System.out.println("**  SPLASH!!  **");
-            player[playerNr].getGrid().setValue(shotPoint, Board.MISS);
+            player[playerNr].getBoard().setValue(shotPoint, Board.MISS);
         }
 
         // tjekker om der rammes
         if (shotValue == Board.SHIP) {
             System.out.println("**  BANG  **");
-            player[playerNr].getGrid().setValue(shotPoint, Board.HIT);
+            player[playerNr].getBoard().setValue(shotPoint, Board.HIT);
         }
         return shotValue;
     }
@@ -94,10 +99,20 @@ public class BattleshipGame {
     public int checkSunkenShip(int playerNr, Point shotPoint) {
         // check sunken ship
         int sunkenShip = player[playerNr].saveHit(shotPoint);
+
+        // if ship is sunk
         if (sunkenShip > -1) {
             System.out.println("You have sunk your opponents " + player[playerNr].getShip()[sunkenShip].getName());
             updateWinner();
+
+            if (playerNr == Player.PLAYER) {
+                // fo marks not to shot around a ship
+                player[Player.PLAYER].aiMarkingsWhenSunk(sunkenShip);
+                System.out.println(player[Player.PLAYER].getBoard());
+                player[Player.COMPUTER].setAiStatus(0);
+            }
         }
+
         return sunkenShip;
     }
 
@@ -112,5 +127,13 @@ public class BattleshipGame {
 
     public void setWinner(int winner) {
         this.winner = winner;
+    }
+
+    public int getGridSize() {
+        return gridSize;
+    }
+
+    public void setGridSize(int gridSize) {
+        BattleshipGame.gridSize = gridSize;
     }
 }

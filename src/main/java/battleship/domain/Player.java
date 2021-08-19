@@ -11,7 +11,7 @@ public class Player {
     String name;
     boolean human;
     Ship[] ship = new Ship[BattleshipGame.noOfShips];
-    Board grid = new Board();
+    Board board = new Board(BattleshipGame.gridSize);
 
     // computer ai!
     int aiStatus = 0;
@@ -54,38 +54,36 @@ public class Player {
     }
 
     public void randomShipPlacement() {
-        grid.clearBoard();
-        int randomX, randomY;
+        board.clearBoard();
         boolean randomHor;
 
         // løkke der gennemgår alle antalSkibe
         for (int i = 0; i < BattleshipGame.noOfShips; i++) {
+
             boolean shipPlaced = false;
+
             while (!shipPlaced) {
 
-                // vælger random parametre mlm 0 og 9
-                randomX = (int) (Math.random() * 10);
-                randomY = (int) (Math.random() * 10);
                 randomHor = (boolean) (Math.random() < 0.5);
-                Point randomPoint = new Point(randomX, randomY);
+                Point randomPoint = randomPoint();
 
                 // Sætter en random orientering
                 ship[i].setHorizontal(randomHor);
 
                 // Tjekker om skibet kan placers
-                if (ship[i].canPlace(randomPoint, grid)) {
-                    ship[i].place(grid, randomPoint, randomHor); // placerer skib
+                if (ship[i].canPlace(randomPoint, board)) {
+                    ship[i].place(board, randomPoint, randomHor); // placerer skib
                     shipPlaced = true; // afslutter løkke
                 }
             }
         }
     }
 
-    public Point randomShot() {
+    public Point randomPoint() {
 
-        // vælger random parametre mlm 0 og 9 og returnerer som Point
-        int randomX = (int) (Math.random() * 10);
-        int randomY = (int) (Math.random() * 10);
+        // vælger random parametre mlm 0 og str. på bræt og returnerer som Point
+        int randomX = (int) (Math.random() * board.getGridSize());
+        int randomY = (int) (Math.random() * board.getGridSize());
         return new Point(randomX, randomY);
 
     }
@@ -110,7 +108,7 @@ public class Player {
                     // System.out.println("case 0");
                     do {
                         // skyder på tilfældigt punkt
-                        returnPoint = randomShot();
+                        returnPoint = randomPoint();
                         // henter værdien af tilfældigt punkt på spillers plade
                         shot = playerBoard.getValue(returnPoint);
                         if (shot == Board.SHIP) {
@@ -159,7 +157,7 @@ public class Player {
 
                     if (randomDirection == DOWN) {
 
-                        if (lastHit.x == 9) break;
+                        if (lastHit.x == board.getGridSize() - 1) break;
 
                         returnPoint = new Point(lastHit.x + 1, lastHit.y); // finder punkt 1 ned (x+1)
                         shot = playerBoard.getValue(returnPoint);
@@ -203,7 +201,7 @@ public class Player {
 
                     if (randomDirection == RIGHT) {
 
-                        if (lastHit.y == 9) break;
+                        if (lastHit.y == board.getGridSize() - 1) break;
 
                         returnPoint = new Point(lastHit.x, lastHit.y + 1); // finder punkt 1 th (y+1)
                         shot = playerBoard.getValue(returnPoint);
@@ -263,7 +261,7 @@ public class Player {
                 case 3:  // skib v -  sidste træf var ned
                     // System.out.println("case 3");
 
-                    if (lastHit.x == 9) {
+                    if (lastHit.x == board.getGridSize() - 1) {
                         aiStatus = 2;
                         break;
                     }
@@ -324,7 +322,7 @@ public class Player {
                 case 5: // skib horisontalt -  sidste træf var højre
                     // System.out.println("case 5");
 
-                    if (lastHit.y == 9) {
+                    if (lastHit.y == board.getGridSize() - 1) {
                         aiStatus = 4;
                         break;
                     }
@@ -402,11 +400,11 @@ public class Player {
     }
 
     private void setAiIfEmpty(Point point) {
-        if (point.x >= 0 && 9 >= point.x &&
-                point.y >= 0 && point.y <= 9) {
+        if (point.x >= 0 && board.getGridSize() - 1 >= point.x &&
+                point.y >= 0 && point.y <= board.getGridSize() - 1) {
 
-            if (grid.getValue(point) == 0) {
-                grid.setValue(point, 4);
+            if (board.getValue(point) == 0) {
+                board.setValue(point, 4);
             }
         }
     }
@@ -420,12 +418,12 @@ public class Player {
         return name;
     }
 
-    public Board getGrid() {
-        return grid;
+    public Board getBoard() {
+        return board;
     }
 
-    public void setGrid(Board grid) {
-        this.grid = grid;
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
     public Ship[] getShip() {

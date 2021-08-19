@@ -30,11 +30,12 @@ public class Board {
     public final static int AI = 4;
 
     public Board() {
-        gridSize = 10;
+        this.gridSize = 10;
         grid = new int[gridSize][gridSize];
     }
 
-    public Board(int gridSize){
+    public Board(int gridSize) {
+        this.gridSize = gridSize;
         grid = new int[gridSize][gridSize];
     }
 
@@ -47,7 +48,7 @@ public class Board {
     }
 
     public void clearBoard(){
-        this.grid = new int[10][10];
+        this.grid = new int[gridSize][gridSize];
     }
 
     public int getGridSize() {
@@ -63,16 +64,16 @@ public class Board {
         String result = "\t\t";
         String symbol;
 
-        // adds 1-10
-        for (int i = 1; i <= 10; i++) {
+        // add numbers
+        for (int i = 1; i <= gridSize; i++) {
             result += (i + " ");
         }
         result += "\n";
 
         // adds rows
-        for (int i = 0; i < 10; i++) {                      // rows i
+        for (int i = 0; i < gridSize; i++) {                      // rows i
             result += "\t" + (char) (65 + i) + "\t";        // letters A-J
-            for (int j = 0; j < 10; j++) {
+            for (int j = 0; j < gridSize; j++) {
                 symbol = " ";
 
                 if (grid[i][j] == SHIP) {
@@ -97,16 +98,16 @@ public class Board {
         String result = "\t\t";
         String symbol;
 
-        // adds 1-10
-        for (int i = 1; i <= 10; i++) {
+        // adds numbers
+        for (int i = 1; i <= gridSize; i++) {
             result += (i + " ");
         }
         result += "\n";
 
         // adds rows
-        for (int i = 0; i < 10; i++) {                      // rows i
+        for (int i = 0; i < gridSize; i++) {                      // rows i
             result += "\t" + (char) (65 + i) + "\t";        // letters A-J
-            for (int j = 0; j < 10; j++) {
+            for (int j = 0; j < gridSize; j++) {
                 symbol = " ";
 
                 if (grid[i][j] == HIT) {
@@ -131,16 +132,16 @@ public class Board {
         // prints board
         String result = "\t\t";
 
-        // adds 1-10
-        for (int i = 1; i <= 10; i++) {
+        // adds numbers
+        for (int i = 1; i <= gridSize; i++) {
             result += (i + " ");
         }
         result += "\n";
 
         // adds rows
-        for (int i = 0; i < 10; i++) {                      // rows i
+        for (int i = 0; i < gridSize; i++) {                      // rows i
             result += "\t" + (char) (65 + i) + "\t";        // letters A-J
-            for (int j = 0; j < 10; j++) {                  // Columns j
+            for (int j = 0; j < gridSize; j++) {                  // Columns j
                 result += "" + grid[i][j] + " ";            // content of point
             }
             result += "\n";

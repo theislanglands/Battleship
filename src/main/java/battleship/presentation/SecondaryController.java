@@ -28,29 +28,27 @@ public class SecondaryController {
     public Button quitBtn;
 
 
-    int winner = -1;
-
-    int gridSize = 10;
+    int gridSize = App.game.getGridSize();
     int leftPicSize = 35;
-    int rightPicSize = 25;
+    int rightPicSize = 35;
     public Point chosenPoint = null;
 
     public static Image[] cellImage = new Image[10];
     ImageView[][] leftContent = new ImageView[gridSize][gridSize];
     ImageView[][] rightContent = new ImageView[gridSize][gridSize];
 
-    final int ERROR = 5;
-    final int CURSOR = 6;
+
     final int COMPUTER = 1;
     final int PLAYER = 0;
 
-    ImageCursor ship_cursor;
+
+    ImageCursor ship_cursor = new ImageCursor(App.cursor);
+    // ImageCursor​(Image image, double hotspotX, double hotspotY)
 
     int playerTurn = 0;
     int sunkenShip = -1;
     int shotValue;
 
-    private Thread game;
 
     @FXML
     TilePane rightGrid = new TilePane();
@@ -63,16 +61,10 @@ public class SecondaryController {
     public void initialize() {
 
         // loading images
-        initializeCellImages();
 
         // setting size of board
         initializeBoardSize(leftPicSize, gridSize, leftGrid);
         initializeBoardSize(rightPicSize, gridSize, rightGrid);
-
-        // drawing left board
-        //initializeGrid(gridSize, leftPicSize, leftGrid);
-        // drawing right board
-        //initializeGrid(gridSize, rightPicSize, rightGrid);
 
         initializeLeftGrid();
         initializeRightGrid();
@@ -80,105 +72,14 @@ public class SecondaryController {
 
         // generating random ships for left
         App.game.player[0].randomShipPlacement();
-        updateRightBoard(App.game.player[PLAYER].getGrid());
-        updateLeftBoard(App.game.player[COMPUTER].getGrid());
-
-        // testing
-        //testShot();
-        /*
-        game = new Thread(new runGame());
-        game.setDaemon(true);
-        game.start();
-        //startGame();
-
-         */
-    }
-
-    private void startGame()
-    {
-
+        updateRightBoard(App.game.player[PLAYER].getBoard());
+        updateLeftBoard(App.game.player[COMPUTER].getBoard());
 
     }
+
 
     public void quitBtnHandler(ActionEvent actionEvent) {
         System.exit(0);
-    }
-
-    public class runGame implements Runnable {
-
-        @Override
-        public void run() {
-            System.out.println("thread running!");
-
-            while (true) {
-                if (chosenPoint == null) {
-                    System.out.println("player turn");
-                    leftGrid.setMouseTransparent(false);
-                    gameLabel.setText("Place your shot");
-                }
-
-                if (chosenPoint != null) {
-                    leftGrid.setMouseTransparent(true);
-                    System.out.println("computer turn");
-                    computerTurn();
-                    /*
-                    synchronized (this) {
-                        try {
-                            //Thread.sleep(sleepTime);
-                            wait(3000);
-                        } catch (InterruptedException ex) {
-                            System.out.println("Interrupted: " + Thread.currentThread());
-                        }
-                    }
-
-                     */
-
-
-                }
-
-/*
-                synchronized (this) {
-                    try {
-                        //Thread.sleep(sleepTime);
-                        wait(1000);
-                    } catch (InterruptedException ex) {
-                        System.out.println("Interrupted: " + Thread.currentThread());
-                    }
-                }
-
- */
-
-            }
-        }
-    }
-
-    private void initializeCellImages() {
-        System.out.println(getClass().getResource("cursor_cell.png"));
-
-        try {
-            cellImage[Board.HIT] = new Image(getClass().getResource("hit_cell.png").toURI().toString());
-            cellImage[Board.EMPTY] = new Image(getClass().getResource("empty_cell.png").toURI().toString());
-            cellImage[Board.SHIP] = new Image(getClass().getResource("ship_cell.png").toURI().toString());
-            cellImage[Board.MISS] = new Image(getClass().getResource("miss_cell.png").toURI().toString());
-            cellImage[5] = new Image(getClass().getResource("error_cell.png").toURI().toString());
-            cellImage[6] = new Image(getClass().getResource("cursor_cell.png").toURI().toString());
-            Image cursor = new Image(getClass().getResource("cursor_cell.png").toURI().toString(), leftPicSize * 0.7, leftPicSize * 0.7, false, false);
-            ship_cursor = new ImageCursor(cursor);
-
-        } catch (URISyntaxException e) {
-            System.out.println("image files not found");
-            e.printStackTrace();
-        }
-    }
-
-    private void testShot() {
-        rightContent[1][4].setImage(cellImage[Board.MISS]);
-        rightContent[9][9].setImage(cellImage[Board.HIT]);
-        rightContent[5][5].setImage(cellImage[Board.SHIP]);
-        rightContent[3][3].setImage(cellImage[5]);
-        rightContent[3][7].setImage(cellImage[6]);
-
-        leftContent[0][1].setImage(cellImage[Board.SHIP]);
     }
 
     private void initializeBoardSize(int picSize, int gridSize, TilePane tilePane) {
@@ -190,15 +91,15 @@ public class SecondaryController {
 
     private void initializeLeftGrid() {
         // Drawing corner
-        ImageView corner = new ImageView(cellImage[Board.SHIP]);
+        ImageView corner = new ImageView(App.cellImage[Board.SHIP]);
         corner.setFitHeight(leftPicSize);
         corner.setFitWidth(leftPicSize);
         leftGrid.getChildren().add(corner);
 
-        // Drawing numbers 1-10
+        // Drawing numbers
         for (int i = 1; i < gridSize + 1; i++) {
             StackPane numbers = new StackPane();
-            ImageView addEmpty = new ImageView(cellImage[Board.EMPTY]);
+            ImageView addEmpty = new ImageView(App.cellImage[Board.EMPTY]);
             addEmpty.setFitHeight(leftPicSize);
             addEmpty.setFitWidth(leftPicSize);
 
@@ -213,7 +114,7 @@ public class SecondaryController {
 
             // adding letter
             StackPane numbers = new StackPane();
-            ImageView addEmpty = new ImageView(cellImage[Board.EMPTY]);
+            ImageView addEmpty = new ImageView(App.cellImage[Board.EMPTY]);
             addEmpty.setFitHeight(leftPicSize);
             addEmpty.setFitWidth(leftPicSize);
 
@@ -224,7 +125,7 @@ public class SecondaryController {
 
             // adding empty fields
             for (int column = 0; column < gridSize; column++) {
-                leftContent[row][column] = new ImageView(cellImage[Board.EMPTY]);
+                leftContent[row][column] = new ImageView(App.cellImage[Board.EMPTY]);
                 leftContent[row][column].setFitHeight(leftPicSize);
                 leftContent[row][column].setFitWidth(leftPicSize);
                 leftGrid.getChildren().add(leftContent[row][column]);
@@ -234,15 +135,15 @@ public class SecondaryController {
 
     private void initializeRightGrid() {
         // Drawing corner
-        ImageView corner = new ImageView(cellImage[Board.SHIP]);
+        ImageView corner = new ImageView(App.cellImage[Board.SHIP]);
         corner.setFitHeight(rightPicSize);
         corner.setFitWidth(rightPicSize);
         rightGrid.getChildren().add(corner);
 
-        // Drawing numbers 1-10
+        // Drawing numbers
         for (int i = 1; i < gridSize + 1; i++) {
             StackPane numbers = new StackPane();
-            ImageView addEmpty = new ImageView(cellImage[Board.EMPTY]);
+            ImageView addEmpty = new ImageView(App.cellImage[Board.EMPTY]);
             addEmpty.setFitHeight(rightPicSize);
             addEmpty.setFitWidth(rightPicSize);
 
@@ -257,7 +158,7 @@ public class SecondaryController {
 
             // adding letter
             StackPane numbers = new StackPane();
-            ImageView addEmpty = new ImageView(cellImage[Board.EMPTY]);
+            ImageView addEmpty = new ImageView(App.cellImage[Board.EMPTY]);
             addEmpty.setFitHeight(rightPicSize);
             addEmpty.setFitWidth(rightPicSize);
 
@@ -268,7 +169,7 @@ public class SecondaryController {
 
             // adding empty fields
             for (int column = 0; column < gridSize; column++) {
-                rightContent[row][column] = new ImageView(cellImage[Board.EMPTY]);
+                rightContent[row][column] = new ImageView(App.cellImage[Board.EMPTY]);
                 rightContent[row][column].setFitHeight(rightPicSize);
                 rightContent[row][column].setFitWidth(rightPicSize);
                 rightGrid.getChildren().add(rightContent[row][column]);
@@ -285,7 +186,7 @@ public class SecondaryController {
                 if (valueAtPoint == Board.EMPTY
                         || valueAtPoint == Board.MISS
                         || valueAtPoint == Board.HIT) {
-                    leftContent[row][column].setImage(cellImage[valueAtPoint]);
+                    leftContent[row][column].setImage(App.cellImage[valueAtPoint]);
                 }
             }
         }
@@ -301,7 +202,7 @@ public class SecondaryController {
                         || valueAtPoint == Board.SHIP
                         || valueAtPoint == Board.MISS
                         || valueAtPoint == Board.HIT) {
-                    rightContent[row][column].setImage(cellImage[valueAtPoint]);
+                    rightContent[row][column].setImage(App.cellImage[valueAtPoint]);
                 }
             }
         }
@@ -369,26 +270,31 @@ public class SecondaryController {
     public void playerTurn(){
         // placing shot
         shotValue = App.game.placeShot(COMPUTER, chosenPoint);
-        // update label
-        updateLabel(leftStatusLabel,shotValue);
 
-        // check if sunken
-        if (shotValue == Board.SHIP) {
-            sunkenShip = App.game.checkSunkenShip(COMPUTER, chosenPoint);
-            if (sunkenShip != -1) {
-                leftStatusLabel.setText("You have sunk computers " + App.game.player[1].getShip()[sunkenShip].getName());
+        if (shotValue == Board.EMPTY || shotValue == Board.SHIP) {
+            // update label
+            updateLabel(leftStatusLabel, shotValue);
+
+            // check if sunken
+            if (shotValue == Board.SHIP) {
+                sunkenShip = App.game.checkSunkenShip(COMPUTER, chosenPoint);
+                if (sunkenShip != -1) {
+                    leftStatusLabel.setText("You have sunk computers " + App.game.player[1].getShip()[sunkenShip].getName());
+                }
             }
-        }
 
-        updateLeftBoard(App.game.player[1].getGrid());
-        changePlayer();
+            updateLeftBoard(App.game.player[1].getBoard());
+            changePlayer();
+        } else {
+            leftStatusLabel.setText("You've allready shot at this point!");
+        }
     }
 
     public void computerTurn() {
         System.out.println("computer Turn");
 
         // Computer's turn
-        chosenPoint = App.game.player[COMPUTER].aiShot(App.game.player[PLAYER].getGrid());
+        chosenPoint = App.game.player[COMPUTER].aiShot(App.game.player[PLAYER].getBoard());
 
         computerShotPointLabel.setText("computer shoots at " + BattleshipGame.transformToCoordinate(chosenPoint));
 
@@ -404,7 +310,7 @@ public class SecondaryController {
             }
         }
 
-        updateRightBoard(App.game.player[PLAYER].getGrid());
+        updateRightBoard(App.game.player[PLAYER].getBoard());
         changePlayer();
     }
 

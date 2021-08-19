@@ -54,7 +54,7 @@ public class Cli {
 
                 while (!validInput) {
 
-                    System.out.println(GAME.player[0].getGrid().printShipsAndHits());
+                    System.out.println(GAME.player[0].getBoard().printShipsAndHits());
 
                     System.out.print("\nPlace your " + GAME.player[0].getShip()[i].getName() +
                             " with length " + GAME.player[0].getShip()[i].getLength() +
@@ -77,9 +77,9 @@ public class Cli {
                 GAME.player[0].getShip()[i].setHorizontal(HorizontalInput(input));
 
                 // Tjekker om skibet kan placeres
-                if (GAME.player[0].getShip()[i].canPlace(BattleshipGame.transformToPoint(input), GAME.player[0].getGrid())) {
+                if (GAME.player[0].getShip()[i].canPlace(BattleshipGame.transformToPoint(input), GAME.player[0].getBoard())) {
                     // placerer skib
-                    GAME.player[0].getShip()[i].place(GAME.player[0].getGrid(), BattleshipGame.transformToPoint(input), GAME.player[0].getShip()[i].isHorizontal());
+                    GAME.player[0].getShip()[i].place(GAME.player[0].getBoard(), BattleshipGame.transformToPoint(input), GAME.player[0].getShip()[i].isHorizontal());
                     placedCorrect = true;
                 }
 
@@ -90,7 +90,7 @@ public class Cli {
             }
         }
 
-        System.out.println(GAME.player[0].getGrid().printShipsAndHits());
+        System.out.println(GAME.player[0].getBoard().printShipsAndHits());
     }
 
     private int startRounds() {
@@ -113,7 +113,7 @@ public class Cli {
 
                 // Placerer skud menneske (metode i spiller?
                 System.out.println("Your Shots");
-                System.out.println(GAME.player[1].getGrid().printShots());
+                System.out.println(GAME.player[1].getBoard().printShots());
                 System.out.print("place your shot? ");
 
                 boolean correctShot = false;
@@ -170,20 +170,20 @@ public class Cli {
             // computer turn
             if (playerTurn == 1) {
 
-                shotPoint = GAME.player[1].aiShot(GAME.player[0].getGrid());
+                shotPoint = GAME.player[1].aiShot(GAME.player[0].getBoard());
 
                 System.out.println("Computer shoots at: " + BattleshipGame.transformToCoordinate(shotPoint));
 
-                shotValue = GAME.player[0].getGrid().getValue(shotPoint);
+                shotValue = GAME.player[0].getBoard().getValue(shotPoint);
 
                 if (shotValue == Board.EMPTY) {
                     System.out.println("** SPLASH!  **");
-                    GAME.player[0].getGrid().setValue(shotPoint, Board.MISS);
+                    GAME.player[0].getBoard().setValue(shotPoint, Board.MISS);
                 }
 
                 if (shotValue == Board.SHIP) {
                     System.out.println("** BANG!  **");
-                    GAME.player[0].getGrid().setValue(shotPoint, Board.HIT);
+                    GAME.player[0].getBoard().setValue(shotPoint, Board.HIT);
                     GAME.player[1].setLastHit(shotPoint);
 
                     // indstil aiStatus ved første hit, og gemmer punktet!
@@ -203,7 +203,7 @@ public class Cli {
                 }
 
                 System.out.println("Your ships");
-                System.out.println(GAME.player[0].getGrid().printShipsAndHits());
+                System.out.println(GAME.player[0].getBoard().printShipsAndHits());
 
 
             } // end computer turn
@@ -235,7 +235,7 @@ public class Cli {
 
     private boolean checkValidInput(String input) {
 
-        // tjekker om inpur er "R"
+        // tjekker om input er "R"
         if (input.equals("R")) return true;
 
         // tjekker om input er Qh
