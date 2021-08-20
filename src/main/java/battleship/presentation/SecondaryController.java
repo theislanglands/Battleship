@@ -71,7 +71,7 @@ public class SecondaryController {
 
 
         // generating random ships for left
-        App.game.player[0].randomShipPlacement();
+        //App.game.player[0].randomShipPlacement();
         updateRightBoard(App.game.player[PLAYER].getBoard());
         updateLeftBoard(App.game.player[COMPUTER].getBoard());
 
@@ -218,9 +218,9 @@ public class SecondaryController {
 
         if (playerTurn == PLAYER) {
             // getting chosenPoint
-            int x = (int) mouseEvent.getX() / leftPicSize - 1;
-            int y = (int) mouseEvent.getY() / leftPicSize - 1;
-            chosenPoint = new Point(y, x); // DEAL WITH THIS
+            int col = (int) mouseEvent.getX() / leftPicSize - 1;
+            int row = (int) mouseEvent.getY() / leftPicSize - 1;
+            chosenPoint = new Point(row, col);
             System.out.println(chosenPoint);
 
             playerTurn();
@@ -316,7 +316,7 @@ public class SecondaryController {
 
     @FXML
     public void rollOver(MouseEvent mouseEvent) {
-        System.out.println(mouseEvent.getEventType().getName());
+        // System.out.println(mouseEvent.getEventType().getName());
 
         if (mouseEvent.getEventType().getName().equals("MOUSE_ENTERED")) {
             App.getScene().setCursor(ship_cursor);

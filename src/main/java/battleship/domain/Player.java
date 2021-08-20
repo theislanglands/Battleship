@@ -53,6 +53,10 @@ public class Player {
         }
     }
 
+    public void placeShip(int shipNr, Point point) {
+        ship[shipNr].place(board, point);
+    }
+
     public void randomShipPlacement() {
         board.clearBoard();
         boolean randomHor;

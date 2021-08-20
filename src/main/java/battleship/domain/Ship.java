@@ -19,9 +19,20 @@ public class Ship {
     public Ship(int length, String name) {
         this.length = length;
         this.name = name;
+        this.horizontal= true;
+    }
+
+    public Ship(int length, boolean horizontal, String name) {
+        this.length = length;
+        this.horizontal = horizontal;
+        this.name = name;
     }
 
     // METHODS
+    public void place(Board board, Point position) {
+        place(board, position, horizontal);
+    }
+
     public void place(Board board, Point position, boolean erHor) {
         this.horizontal = erHor;
         if (canPlace(position, board)) {
@@ -193,6 +204,14 @@ public class Ship {
 
     public void updateHitCount() {
         hits++;
+    }
+
+    public void flipOrientation(){
+        if (horizontal){
+            horizontal = false;
+        } else {
+            horizontal = true;
+        }
     }
 
     @Override
