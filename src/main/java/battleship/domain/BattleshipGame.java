@@ -2,21 +2,26 @@ package battleship.domain;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class BattleshipGame {
 
-    public static Map<String, Integer> ships = new HashMap<>();
+    public static Map<String, Integer> ships = new LinkedHashMap<>();
     public static int noOfShips;
-    public static int gridSize = 10;
+    public static int gridSize;
+    private int aiLevel = 4;
 
     private int round = 0;
     public Player[] player = new Player[2];
 
     private int winner = -1;
 
-    public BattleshipGame() {
-        intilializeShips();
+    public BattleshipGame(int noOfShips, int gridSize) {
+        setGridSize(gridSize);
+        setNoOfShips(noOfShips);
+        intilializeShips(noOfShips);
+        System.out.println(ships);
         initializePlayers();
     }
 
@@ -47,13 +52,47 @@ public class BattleshipGame {
         return result;
     }
 
-    private void intilializeShips() {
-        ships.put("Carrier", 5);
-        ships.put("Battleship", 4);
-        ships.put("Cruiser", 3);
-        ships.put("Submarine", 3);
-        ships.put("Destoyer", 2);
-        noOfShips = ships.size();
+    public void intilializeShips(int noOfShips) {
+        switch (noOfShips) {
+            case 4:
+                ships.put("Battleship", 4);
+                ships.put("Cruiser", 3);
+                ships.put("Destoyer", 2);
+                ships.put("Submarine", 1);
+                break;
+
+            case 5:
+
+                ships.put("Carrier", 5);
+                ships.put("Battleship", 4);
+                ships.put("Cruiser", 3);
+                ships.put("Submarine", 3);
+                ships.put("Destroyer", 2);
+                break;
+
+            case 7:
+                ships.put("Carrier", 5);
+                ships.put("Battleship", 4);
+                ships.put("Cruiser", 3);
+                ships.put("Destoyer 1", 2);
+                ships.put("Destoyer 2", 2);
+                ships.put("Submarine 1", 1);
+                ships.put("Submarine 2", 1);
+                break;
+
+            case 10:
+                ships.put("Battleship", 4);
+                ships.put("Cruiser 1", 3);
+                ships.put("Cruiser 2", 3);
+                ships.put("Destoyer 1", 2);
+                ships.put("Destoyer 2", 2);
+                ships.put("Destoyer 3", 2);
+                ships.put("Submarine 1", 1);
+                ships.put("Submarine 2", 1);
+                ships.put("Submarine 3", 1);
+                ships.put("Submarine 4", 1);
+                break;
+        }
     }
 
     private void initializePlayers() {
@@ -66,8 +105,8 @@ public class BattleshipGame {
         return noOfShips;
     }
 
-    public void setNoOfShips(int noOfShips) {
-        noOfShips = noOfShips;
+    public static void setNoOfShips(int noOfShips) {
+        BattleshipGame.noOfShips = noOfShips;
     }
 
     public int getRound() {
@@ -135,5 +174,13 @@ public class BattleshipGame {
 
     public void setGridSize(int gridSize) {
         BattleshipGame.gridSize = gridSize;
+    }
+
+    public int getAiLevel() {
+        return aiLevel;
+    }
+
+    public void setAiLevel(int aiLevel) {
+        aiLevel = aiLevel;
     }
 }

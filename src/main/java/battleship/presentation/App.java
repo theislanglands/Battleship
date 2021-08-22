@@ -17,10 +17,12 @@ import java.net.URISyntaxException;
 public class App extends Application {
 
     private static Scene scene;
-    public static BattleshipGame game = new BattleshipGame();
+    public static BattleshipGame game;
 
     public static Image[] cellImage = new Image[10];
     public static Image cursor;
+
+    // TODO set pic size according to gridSize
 
 
 
@@ -28,7 +30,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
 
         initializeCellImages();
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("Primary.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("Battleship_settings.fxml"));
         scene = new Scene(fxmlLoader.load(), 1024, 768);
         stage.setTitle("Battleship");
         stage.setScene(scene);

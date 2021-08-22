@@ -29,7 +29,7 @@ public class Player {
 
     public Player(boolean human) {
         this.human = human;
-
+        System.out.println("NOS"+BattleshipGame.noOfShips);
         generateShips();
 
         if (human) {
@@ -44,10 +44,12 @@ public class Player {
     }
 
     private void generateShips() {
+        System.out.println("generate ships");
+        System.out.println(BattleshipGame.ships);
         // generating an array of ships based on the defenitions i BattleshipGame
         int i = 0;
         for (String shipName : BattleshipGame.ships.keySet()) {
-            //System.out.println("shipname " + shipName);
+            System.out.println("shipname " + shipName);
             ship[i] = new Ship(BattleshipGame.ships.get(shipName), shipName);
             i++;
         }

@@ -16,7 +16,10 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-          <Label fx:id="welcomeText" text="Velcome to battle ships" />
+          <Label fx:id="welcomeText" text="Welcome to battle ships">
+      <font>
+         <Font name="System Bold" size="31.0" />
+      </font></Label>
    <HBox prefHeight="580.0" prefWidth="984.0">
       <children>
          <VBox prefHeight="580.0" prefWidth="508.0">
@@ -56,7 +59,12 @@
                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                   </opaqueInsets>
                </GridPane>
-               <Label fx:id="computerShotPointLabel" alignment="CENTER" prefHeight="267.0" prefWidth="389.0" text="Space = change orientation">
+               <Label text="F: Change orientation">
+                  <font>
+                     <Font size="21.0" />
+                  </font>
+               </Label>
+               <Label text="R: Place Ships Randomly">
                   <font>
                      <Font size="21.0" />
                   </font>
@@ -68,11 +76,6 @@
    <HBox alignment="CENTER" prefHeight="5.0" prefWidth="984.0">
       <children>
          <Button fx:id="quitBtn" mnemonicParsing="false" onAction="#quitBtnHandler" text="Quit ">
-            <HBox.margin>
-               <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-            </HBox.margin>
-         </Button>
-         <Button fx:id="startBtn" mnemonicParsing="false" onAction="#switchToSecondary" text="Start Game">
             <HBox.margin>
                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
             </HBox.margin>

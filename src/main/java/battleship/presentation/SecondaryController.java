@@ -42,7 +42,7 @@ public class SecondaryController {
     final int PLAYER = 0;
 
 
-    ImageCursor ship_cursor = new ImageCursor(App.cursor);
+    ImageCursor ship_cursor = new ImageCursor(App.cursor,16,16);
     // ImageCursor​(Image image, double hotspotX, double hotspotY)
 
     int playerTurn = 0;

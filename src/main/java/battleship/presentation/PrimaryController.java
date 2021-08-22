@@ -40,9 +40,10 @@ public class PrimaryController {
 
     @FXML
     public void initialize() {
-    initializeBoard();
-    fleetBox.setVgap(15);
-    fleetBox.setHgap(15);
+        App.game.intilializeShips(App.game.getNoOfShips());
+        initializeBoard();
+        fleetBox.setVgap(15);
+        fleetBox.setHgap(15);
 
         showFleet();
     }
@@ -136,6 +137,8 @@ public class PrimaryController {
     }
 
     public void clickOnBoatHandler(MouseEvent mouseEvent) {
+
+        // TODO: check om skib allerede er placeret!
 
         // checker om der allerede er valgt skib!
         if (selectedShip == -1) {

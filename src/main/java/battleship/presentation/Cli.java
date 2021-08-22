@@ -6,12 +6,9 @@ import battleship.domain.Board;
 import java.awt.*;
 import java.util.Scanner;
 
-
-// TODO hvisning af bræt, modstander - etc! ting der skal udelades
-
 public class Cli {
 
-    final BattleshipGame GAME = new BattleshipGame();
+    final BattleshipGame GAME = new BattleshipGame(5,10);
     Scanner keyboard = new Scanner(System.in);
     String input;
     int winner = -1;
