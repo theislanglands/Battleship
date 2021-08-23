@@ -15,26 +15,26 @@
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-
-          <Label fx:id="welcomeText" text="Welcome to battle ships">
+   <Label fx:id="welcomeText" prefHeight="100.0" prefWidth="1015.0" text="Welcome to battle ships">
       <font>
          <Font name="System Bold" size="31.0" />
-      </font></Label>
+      </font>
+   </Label>
    <HBox prefHeight="580.0" prefWidth="984.0">
       <children>
          <VBox prefHeight="580.0" prefWidth="508.0">
             <children>
-               <TilePane fx:id="board" alignment="CENTER" onMouseClicked="#placeShip" prefHeight="199.0" prefWidth="547.0" />
-               <Label fx:id="gameLabel" alignment="CENTER" contentDisplay="TOP" prefHeight="60.0" prefWidth="635.0" text="Place you ships" textAlignment="CENTER" wrapText="true">
+               <Label fx:id="gameLabel" alignment="CENTER" contentDisplay="TOP" prefHeight="60.0" prefWidth="547.0" text="Place you ships" textAlignment="CENTER" wrapText="true">
                   <font>
                      <Font size="21.0" />
                   </font>
                </Label>
+               <TilePane fx:id="board" alignment="CENTER" onMouseClicked="#placeShip" prefHeight="199.0" prefWidth="547.0" />
             </children>
          </VBox>
          <VBox prefHeight="625.0" prefWidth="389.0">
             <children>
-               <Label alignment="CENTER" prefHeight="27.0" prefWidth="392.0" text="Your fleet">
+               <Label alignment="CENTER" prefHeight="60.0" prefWidth="392.0" text="Your fleet">
                   <font>
                      <Font size="21.0" />
                   </font>
@@ -80,7 +80,7 @@
                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
             </HBox.margin>
          </Button>
-         <Button fx:id="settingsBtn" mnemonicParsing="false" text="Settings">
+         <Button fx:id="settingsBtn" disable="true" mnemonicParsing="false" text="Settings">
             <HBox.margin>
                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
             </HBox.margin>

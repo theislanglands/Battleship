@@ -1,6 +1,9 @@
 package battleship.domain;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Player {
 
@@ -12,6 +15,7 @@ public class Player {
     boolean human;
     Ship[] ship = new Ship[BattleshipGame.noOfShips];
     Board board = new Board(BattleshipGame.gridSize);
+    int aiLevel = 4;
 
     // computer ai!
     int aiStatus = 0;
@@ -31,6 +35,12 @@ public class Player {
      * aiStatus = 4; skib horisontal - skyd venstre
      * aiStatus = 5: skib horisontal - skyd højre
      */
+
+    // Ai level 0 = stupid, stay in random shot
+    // Ai level 1 = clever when hit a boat, bot no 4'marks
+    // Ai level 2 = clever when hit a boat, + 4 marks
+    // ai level 3 = sometimes use intelligent random shot!
+    // ai level 4 = allways use intelligent random shot
 
     public Player(boolean human) {
         this.human = human;
@@ -94,7 +104,9 @@ public class Player {
         int longestShip = 0;
 
         for (int i = 0; i < BattleshipGame.noOfShips; i++) {
-            if (ship[i].getLength() > longestShip) longestShip = ship[i].getLength();
+            if (!ship[i].isSunk() && ship[i].getLength() > longestShip) {
+                longestShip = ship[i].getLength();
+            }
         }
 
         return longestShip;
@@ -112,33 +124,49 @@ public class Player {
     public Point aiShot(Board playerBoard, int longestShipRemaining) {
 
         System.out.println("aiStatus " + aiStatus);
+        System.out.println("aiLevel " + aiLevel);
+        //System.out.println("longest ship " + longestShipRemaining);
 
 
         Point returnPoint = null;
         int shot;
+
 
         while (true) {
             // System.out.println("ai " + aiStatus);
 
             switch (aiStatus) {
 
-                case 0: // intet ramt, tilfældigt skud
+                case 0:
+
+                    // intet ramt, tilfældigt skud
                     // System.out.println("case 0");
-                    do {
-                        // skyder på tilfældigt punkt
-                        returnPoint = randomPoint();
-                        // henter værdien af tilfældigt punkt på spillers plade
-                        shot = playerBoard.getValue(returnPoint);
-                        if (shot == Board.SHIP) {
-                            aiStatus = 1;
-                            lastHit = returnPoint;
+
+                    if (aiLevel < 3) {
+                        returnPoint = randomShot(playerBoard);
+                    }
+
+                    if (aiLevel == 3) {
+                        boolean randomBol = new Random().nextBoolean();
+                        if (randomBol) {
+                            returnPoint = randomShot(playerBoard);
                         }
-                    } while (shot >= 2);
+                        else {
+                            returnPoint = intelligentRandomShot(playerBoard, longestShipRemaining);
+                        }
+                    }
+                    if (aiLevel > 3) {
+                        returnPoint = intelligentRandomShot(playerBoard, longestShipRemaining);
+                    }
 
-                    //Point intelligentPoint = intelligentRandomShot(playerBoard, longestShipRemaining);
 
+                    shot = playerBoard.getValue(returnPoint);
+
+                    if (shot == Board.SHIP) {
+                        lastHit = returnPoint;
+                        if (aiLevel != 0) aiStatus = 1;
+                    }
                     return returnPoint;
-
 
 
                 case 1:// Et skib lige ramt, og retning skal estableres
@@ -375,77 +403,137 @@ public class Player {
         }
     }
 
-    private Point intelligentRandomShot(Board board, int longestShipRemaining) {
-
-        // tjek i alle fire retninger ud fra punkt om der er 4 tomme felter foran og en "barrierer på 5"
-        // de punkter der har flest hit, er bedste skud!
-
-        // for AI=0.
-        Point returnPoint = null;
-        int possibleHit;
-
-        // run through every point, and tjek i alle retninger om der rammes, tidligere skud, hit, eller et 4 tal, eller kant af bræt i lige præcis afstand af længsteskib
-        for (int row = 0; row < board.getGridSize(); row++) {
-
-            for (int column = 0; column < board.getGridSize(); column++) {
-                int selectedPoint = board.getValue(new Point(row, column));
-                // Tjekker op.
-
-
-                int selectedPointPossibleHit = 0;
-            }
-        }
-
-
+    private Point randomShot(Board playerBoard) {
+        System.out.println("randomshot");
+        Point returnPoint;
+        do {
+            // skyder på tilfældigt punkt
+            returnPoint = randomPoint();
+            // henter værdien af tilfældigt punkt på spillers plade
+        } while (playerBoard.getValue(returnPoint) >= 2);
         return returnPoint;
     }
 
-    public boolean checkNeighbour(Board board, Point p, int ls, int xdeplacement, int ydeplacement) {
-        // tjek i ene retninger ud fra punkt om der er ls-1 tomme felter foran og en "barrierer på ls"
+    private Point intelligentRandomShot(Board board, int longestShipRemaining) {
+        System.out.println("intelligent random shot");
+        // tjek i alle fire retninger ud fra punkt om der er 4 tomme felter foran og en "barrierer på 5"
+        // de punkter der har flest hit, er bedste skud!
+        // for AI=0.
+        List<Point> returnPoints = new ArrayList<>();
+
+        int maxPossibleHit = 0;
+
+        // genererer liste med bedste muligheder
+        for (int row = 0; row < board.getGridSize(); row++) {
+
+            for (int column = 0; column < board.getGridSize(); column++) {
+
+                Point p = new Point(row, column);
+
+                if (board.getValue(p) == Board.EMPTY ||
+                        board.getValue(p) == Board.SHIP
+                )
+
+                {
+                    int possibleHitsAtPoint = possibleHits(board, p, longestShipRemaining);
+
+
+                    if (possibleHitsAtPoint == maxPossibleHit) {
+                        returnPoints.add(p);
+                    }
+
+                    if (possibleHitsAtPoint > maxPossibleHit) {
+                        returnPoints.clear();
+                        returnPoints.add(p);
+                        maxPossibleHit = possibleHitsAtPoint;
+                        System.out.println("new max pos hits:" + maxPossibleHit);
+                    }
+                }
+            }
+        }
+
+        // vælger random element i listen
+        int randomIndex = (int) (Math.random() * returnPoints.size());
+        System.out.println("return points" + returnPoints);
+
+        Point returnPoint = returnPoints.get(randomIndex);
+        System.out.println("return Point " + returnPoint);
+        System.out.println("max pos hits" + maxPossibleHit);
+        System.out.println("longest ship remaining" + longestShipRemaining);
+        return returnPoints.get(randomIndex);
+    }
+
+    private int possibleHits(Board board, Point point, int longestShip) {
+        int result = 0;
+        //Point checkPoint = new Point(point);
+        // evaluer om fundne pkt er hit etc.
+        //UP
+        if (checkNeighbour(board, point, longestShip,-1,0)) {
+            //System.out.println("point " + point + " up TRUE");
+            result++;
+        }
+
+        //DOWN
+        if (checkNeighbour(board, point, longestShip,1,0)) {
+            //System.out.println("point " + point + " down TRUE");
+
+            result++;
+        }
+
+        // LEFT
+        if (checkNeighbour(board, point, longestShip,0,-1)) {
+            //System.out.println("point " + point + " left TRUE");
+            result++;
+        }
+
+        // Right
+        if (checkNeighbour(board, point, longestShip,0,1)) {
+            //System.out.println("point " + point + " right TRUE");
+
+            result++;
+        }
+        return result;
+    }
+
+
+    public boolean checkNeighbour(Board board, Point checkPoint, int longestShip, int dx, int dy) {
+        // tjek i en retninge dx,dy ud fra punkt p om der er ls-1 tomme felter foran og en "barrierer på ls"
+        // anvendes til intelligent Ai shot med status ai= 0 (random)
         // bruger rekursion
 
-        ls--;
-        p.x += xdeplacement;
-        p.y += ydeplacement;
-        //System.out.println("Point p" + p);
-        //System.out.println("ls " + ls);
+        Point point = new Point(checkPoint);
+
+        longestShip--;
+        point.translate(dx, dy);
 
         // tjek om vi har nået kanten og der er mere skib tilbage
-        if (p.y < 0 && ls != 0) return false;
-        if (p.x < 0 && ls != 0) return false;
-        if (p.x == BattleshipGame.gridSize && ls != 0) return false;
-        if (p.y == BattleshipGame.gridSize && ls != 0) return false;
-
-        // Hvis vi når til sidste element af skibet
-
-        // tjekker om det er en kant!
-        if (ls == 0) {
-            if (p.y == -1) return true;
-            if (p.y == BattleshipGame.gridSize) return true;
-            if (p.x == -1) return true;
-            if (p.x == BattleshipGame.gridSize) return true;
-
-            // tjekker om det er hit, miss elle AI
-            if (board.getValue(p) >= 2) return true;
-
-            // vi er nået slutning uden af møde, kant, hit miss eller AI
+        if ((point.y == -1 && longestShip != 0)
+                || (point.x == -1 && longestShip != 0)
+                || (point.x == BattleshipGame.gridSize && longestShip != 0)
+                || (point.y == BattleshipGame.gridSize && longestShip != 0)) {
             return false;
         }
 
-        // hvis det er tom eller skib felt, tjek næste eller false
-        if (board.getValue(p) == Board.EMPTY || board.getValue(p) == Board.SHIP) {
-            return checkNeighbour(board,p, ls,xdeplacement,ydeplacement);
+        // Hvis vi når til sidste element af skibet
+        if (longestShip == 0) {
+            // tjekker om det er en kant!
+            if (point.y == -1 || point.y == BattleshipGame.gridSize
+                    || point.x == -1 || point.x == BattleshipGame.gridSize) {
+                return true;
+            }
+
+            // returnerer true om det er hit, miss elle AI, ellers false
+            return board.getValue(point) >= 2;
+        }
+
+        // hvis det er tomt eller skib felt, tjek næste
+        if (board.getValue(point) == Board.EMPTY
+                || board.getValue(point) == Board.SHIP) {
+            return checkNeighbour(board, point, longestShip, dx, dy);
         } else {
             return false;
         }
     }
-
-
-
-
-
-
-
 
     public int saveHit(Point point) {
         // gennemløber alle skibe, og ser om punktet er indeholdt i dem,
@@ -467,6 +555,8 @@ public class Player {
     }
 
     public void aiMarkingsWhenSunk(int shipNr) {
+        if (aiLevel < 2) return;
+
         // indsætter 4'taller rundt om skib, der hvor der ikke er 3-taller
         Point shipPos = ship[shipNr].getPosition();
 
@@ -480,8 +570,7 @@ public class Player {
                 shipPos.x = ship[shipNr].getPosition().x + i;
             }
 
-
-            // kører rund om punkt
+            // kører rundt om punkt
             for (int j = -1; j < 2; j++) {
                 // y konstant x flytter
                 setAiIfEmpty(new Point(shipPos.x + j, shipPos.y));
@@ -542,6 +631,14 @@ public class Player {
 
     public void setLastHit(Point lastHit) {
         this.lastHit = lastHit;
+    }
+
+    public int getAiLevel() {
+        return aiLevel;
+    }
+
+    public void setAiLevel(int aiLevel) {
+        this.aiLevel = aiLevel;
     }
 
     @Override

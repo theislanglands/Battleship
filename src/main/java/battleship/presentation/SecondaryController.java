@@ -17,7 +17,6 @@ import javafx.scene.layout.TilePane;
 
 import java.awt.*;
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 public class SecondaryController {
 
@@ -26,6 +25,7 @@ public class SecondaryController {
     public Label computerShotPointLabel;
     public Label rightStatusLabel;
     public Button quitBtn;
+    public Label mainStatusLabel;
 
 
     int gridSize = App.game.getGridSize();
@@ -41,9 +41,8 @@ public class SecondaryController {
     final int COMPUTER = 1;
     final int PLAYER = 0;
 
-
     ImageCursor ship_cursor = new ImageCursor(App.cursor,16,16);
-    // ImageCursor​(Image image, double hotspotX, double hotspotY)
+
 
     int playerTurn = 0;
     int sunkenShip = -1;
@@ -69,14 +68,10 @@ public class SecondaryController {
         initializeLeftGrid();
         initializeRightGrid();
 
-
         // generating random ships for left
-        //App.game.player[0].randomShipPlacement();
         updateRightBoard(App.game.player[PLAYER].getBoard());
         updateLeftBoard(App.game.player[COMPUTER].getBoard());
-
     }
-
 
     public void quitBtnHandler(ActionEvent actionEvent) {
         System.exit(0);
@@ -222,7 +217,8 @@ public class SecondaryController {
             int row = (int) mouseEvent.getY() / leftPicSize - 1;
             chosenPoint = new Point(row, col);
             System.out.println(chosenPoint);
-
+            mainStatusLabel.setText("");
+            gameLabel.setText("You shoot at: " + BattleshipGame.transformToCoordinate(chosenPoint));
             playerTurn();
         }
     }
@@ -259,10 +255,10 @@ public class SecondaryController {
     private void endGame() {
         System.out.println("Game Over");
         if (App.game.getWinner() == PLAYER) {
-            leftStatusLabel.setText("You have won");
+            mainStatusLabel.setText("You have won");
         }
         if (App.game.getWinner() == COMPUTER) {
-            leftStatusLabel.setText("You have lost");
+            mainStatusLabel.setText("You have lost");
         }
         leftGrid.setMouseTransparent(true);
     }
@@ -280,14 +276,14 @@ public class SecondaryController {
             if (shotValue == Board.SHIP) {
                 sunkenShip = App.game.checkSunkenShip(COMPUTER, chosenPoint);
                 if (sunkenShip != -1) {
-                    leftStatusLabel.setText("You have sunk computers " + App.game.player[1].getShip()[sunkenShip].getName());
+                    mainStatusLabel.setText("You have sunk computers " + App.game.player[1].getShip()[sunkenShip].getName());
                 }
             }
 
             updateLeftBoard(App.game.player[1].getBoard());
             changePlayer();
         } else {
-            leftStatusLabel.setText("You've allready shot at this point!");
+            mainStatusLabel.setText("You've allready shot at this point!");
         }
     }
 
@@ -302,11 +298,10 @@ public class SecondaryController {
         shotValue = App.game.placeShot(PLAYER, chosenPoint);
         updateLabel(rightStatusLabel, shotValue);
 
-
         if (shotValue == Board.SHIP) {
             sunkenShip = App.game.checkSunkenShip(PLAYER, chosenPoint);
             if (sunkenShip != -1) {
-                rightStatusLabel.setText("Computer have sunk your " + App.game.player[PLAYER].getShip()[sunkenShip].getName());
+                mainStatusLabel.setText("Computer have sunk your " + App.game.player[PLAYER].getShip()[sunkenShip].getName());
                 App.game.player[COMPUTER].setAiStatus(0);
             }
         }
@@ -326,31 +321,16 @@ public class SecondaryController {
             App.getScene().setCursor(Cursor.DEFAULT);
         }
     }
+
+    @FXML
+    public void saveBtnHandler(ActionEvent event) {
+
+    }
+
+
+
+
 }
 
 
 // TODO: skriv sammen left & right grid med boolean left/right som argument
-
-/*
-Task<Void> task = new Task<Void>() {
-
-    @Override
-    protected Void call() throws InterruptedException {
-        updateMessage("Connecting.");
-        Thread.sleep(500);
-        updateMessage("Connecting..");
-        Thread.sleep(500);
-        updateMessage("Connecting...");
-        Thread.sleep(500);
-
-        return null;
-    }
-
-};
-
-// bind status to task's message
-Status.get().bind(task.messageProperty());
-
-// run task on different thread
-new Thread(task).start();
- */

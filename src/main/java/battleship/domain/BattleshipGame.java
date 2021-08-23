@@ -10,7 +10,7 @@ public class BattleshipGame {
     public static Map<String, Integer> ships = new LinkedHashMap<>();
     public static int noOfShips;
     public static int gridSize;
-    private int aiLevel = 4;
+    private int aiLevel = 1;
 
     private int round = 0;
     public Player[] player = new Player[2];
@@ -132,7 +132,7 @@ public class BattleshipGame {
             System.out.println("**  BANG  **");
             player[playerNr].getBoard().setValue(shotPoint, Board.HIT);
         }
-
+/*
         if (playerNr == 1) {
             int x = shotPoint.x;
             int y = shotPoint.y;
@@ -148,10 +148,9 @@ public class BattleshipGame {
 
             shotPoint = new Point(x,y);
             System.out.println("RIGHT " + player[1].checkNeighbour(player[1].getBoard(), shotPoint, 3,0,1));
-
-
-
         }
+
+ */
         return shotValue;
     }
 
@@ -167,7 +166,6 @@ public class BattleshipGame {
             if (playerNr == Player.PLAYER) {
                 // fo marks not to shot around a ship
                 player[Player.PLAYER].aiMarkingsWhenSunk(sunkenShip);
-                System.out.println(player[Player.PLAYER].getBoard());
                 player[Player.COMPUTER].setAiStatus(0);
             }
         }
@@ -202,6 +200,7 @@ public class BattleshipGame {
 
     public void setAiLevel(int aiLevel) {
         aiLevel = aiLevel;
+        player[Player.COMPUTER].setAiLevel(aiLevel);
     }
 
 }
