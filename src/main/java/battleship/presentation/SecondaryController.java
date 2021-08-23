@@ -14,6 +14,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 import java.awt.*;
 import java.io.IOException;
@@ -274,6 +276,7 @@ public class SecondaryController {
 
             // check if sunken
             if (shotValue == Board.SHIP) {
+                Sounds.playBang();
                 sunkenShip = App.game.checkSunkenShip(COMPUTER, chosenPoint);
                 if (sunkenShip != -1) {
                     mainStatusLabel.setText("You have sunk computers " + App.game.player[1].getShip()[sunkenShip].getName());
@@ -293,12 +296,13 @@ public class SecondaryController {
         // Computer's turn
         chosenPoint = App.game.player[COMPUTER].aiShot(App.game.player[PLAYER].getBoard(), App.game.player[PLAYER].longestShipLength());
 
-        computerShotPointLabel.setText("computer shoots at " + BattleshipGame.transformToCoordinate(chosenPoint));
+        computerShotPointLabel.setText("Computer shoots at: " + BattleshipGame.transformToCoordinate(chosenPoint));
 
         shotValue = App.game.placeShot(PLAYER, chosenPoint);
         updateLabel(rightStatusLabel, shotValue);
 
         if (shotValue == Board.SHIP) {
+            Sounds.playBang();
             sunkenShip = App.game.checkSunkenShip(PLAYER, chosenPoint);
             if (sunkenShip != -1) {
                 mainStatusLabel.setText("Computer have sunk your " + App.game.player[PLAYER].getShip()[sunkenShip].getName());
@@ -324,7 +328,7 @@ public class SecondaryController {
 
     @FXML
     public void saveBtnHandler(ActionEvent event) {
-
+        Sounds.playBang();
     }
 
 

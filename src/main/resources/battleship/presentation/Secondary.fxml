@@ -57,11 +57,11 @@
                      </font>
                   </Label>
                   <TilePane fx:id="leftGrid" alignment="CENTER" onMouseClicked="#clickOnBoard" onMouseEntered="#rollOver" onMouseExited="#rollOver" prefHeight="191.0" prefWidth="455.0" />
-                  <Label fx:id="gameLabel" alignment="CENTER" contentDisplay="TOP" prefHeight="60.0" prefWidth="635.0" text="Click on grid to fire" textAlignment="CENTER" wrapText="true">
+                  <Label fx:id="gameLabel" alignment="CENTER" contentDisplay="TOP" prefHeight="60.0" prefWidth="455.0" text="Click on grid to fire" textAlignment="CENTER" wrapText="true">
                      <font>
                         <Font size="21.0" />
                      </font></Label>
-                  <Label fx:id="leftStatusLabel" alignment="CENTER" prefHeight="27.0" prefWidth="656.0" text="status">
+                  <Label fx:id="leftStatusLabel" alignment="CENTER" prefHeight="27.0" prefWidth="455.0" text="status">
                      <font>
                         <Font size="21.0" />
                      </font>

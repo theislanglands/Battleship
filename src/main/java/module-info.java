@@ -7,6 +7,7 @@ module battleship.battleship2 {
     requires validatorfx;
     requires org.kordamp.ikonli.javafx;
     requires java.desktop;
+    requires javafx.media;
 
     opens battleship.presentation to javafx.fxml, javafx.media;
     exports battleship.presentation;
