@@ -59,6 +59,10 @@ public class Board {
         this.gridSize = gridSize;
     }
 
+    public int[][] getGrid() {
+        return grid;
+    }
+
     public String printShipsAndHits(){
 
         String result = "\t\t";
@@ -124,7 +128,6 @@ public class Board {
 
         return result;
     }
-
 
     @Override
     public String toString() {

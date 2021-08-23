@@ -167,7 +167,7 @@ public class Cli {
             // computer turn
             if (playerTurn == 1) {
 
-                shotPoint = GAME.player[1].aiShot(GAME.player[0].getBoard());
+                shotPoint = GAME.player[1].aiShot(GAME.player[0].getBoard(), GAME.player[0].longestShipLength());
 
                 System.out.println("Computer shoots at: " + BattleshipGame.transformToCoordinate(shotPoint));
 

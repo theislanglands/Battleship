@@ -17,6 +17,11 @@ public class Player {
     int aiStatus = 0;
     Point lastHit;
 
+    final int UP = 0;
+    final int DOWN = 1;
+    final int LEFT = 2;
+    final int RIGHT = 3;
+
     // DISSE KAN LAVES FINAL STATIC?
     /*
      * aiStatus = 0: intet truffet - random skud
@@ -85,6 +90,16 @@ public class Player {
         }
     }
 
+    public int longestShipLength(){
+        int longestShip = 0;
+
+        for (int i = 0; i < BattleshipGame.noOfShips; i++) {
+            if (ship[i].getLength() > longestShip) longestShip = ship[i].getLength();
+        }
+
+        return longestShip;
+    }
+
     public Point randomPoint() {
 
         // vælger random parametre mlm 0 og str. på bræt og returnerer som Point
@@ -94,13 +109,10 @@ public class Player {
 
     }
 
-    public Point aiShot(Board playerBoard) {
+    public Point aiShot(Board playerBoard, int longestShipRemaining) {
 
         System.out.println("aiStatus " + aiStatus);
-        final int UP = 0;
-        final int DOWN = 1;
-        final int LEFT = 2;
-        final int RIGHT = 3;
+
 
         Point returnPoint = null;
         int shot;
@@ -123,7 +135,11 @@ public class Player {
                         }
                     } while (shot >= 2);
 
+                    //Point intelligentPoint = intelligentRandomShot(playerBoard, longestShipRemaining);
+
                     return returnPoint;
+
+
 
                 case 1:// Et skib lige ramt, og retning skal estableres
                     // System.out.println("case 1");
@@ -358,6 +374,78 @@ public class Player {
             }
         }
     }
+
+    private Point intelligentRandomShot(Board board, int longestShipRemaining) {
+
+        // tjek i alle fire retninger ud fra punkt om der er 4 tomme felter foran og en "barrierer på 5"
+        // de punkter der har flest hit, er bedste skud!
+
+        // for AI=0.
+        Point returnPoint = null;
+        int possibleHit;
+
+        // run through every point, and tjek i alle retninger om der rammes, tidligere skud, hit, eller et 4 tal, eller kant af bræt i lige præcis afstand af længsteskib
+        for (int row = 0; row < board.getGridSize(); row++) {
+
+            for (int column = 0; column < board.getGridSize(); column++) {
+                int selectedPoint = board.getValue(new Point(row, column));
+                // Tjekker op.
+
+
+                int selectedPointPossibleHit = 0;
+            }
+        }
+
+
+        return returnPoint;
+    }
+
+    public boolean checkNeighbour(Board board, Point p, int ls, int xdeplacement, int ydeplacement) {
+        // tjek i ene retninger ud fra punkt om der er ls-1 tomme felter foran og en "barrierer på ls"
+        // bruger rekursion
+
+        ls--;
+        p.x += xdeplacement;
+        p.y += ydeplacement;
+        //System.out.println("Point p" + p);
+        //System.out.println("ls " + ls);
+
+        // tjek om vi har nået kanten og der er mere skib tilbage
+        if (p.y < 0 && ls != 0) return false;
+        if (p.x < 0 && ls != 0) return false;
+        if (p.x == BattleshipGame.gridSize && ls != 0) return false;
+        if (p.y == BattleshipGame.gridSize && ls != 0) return false;
+
+        // Hvis vi når til sidste element af skibet
+
+        // tjekker om det er en kant!
+        if (ls == 0) {
+            if (p.y == -1) return true;
+            if (p.y == BattleshipGame.gridSize) return true;
+            if (p.x == -1) return true;
+            if (p.x == BattleshipGame.gridSize) return true;
+
+            // tjekker om det er hit, miss elle AI
+            if (board.getValue(p) >= 2) return true;
+
+            // vi er nået slutning uden af møde, kant, hit miss eller AI
+            return false;
+        }
+
+        // hvis det er tom eller skib felt, tjek næste eller false
+        if (board.getValue(p) == Board.EMPTY || board.getValue(p) == Board.SHIP) {
+            return checkNeighbour(board,p, ls,xdeplacement,ydeplacement);
+        } else {
+            return false;
+        }
+    }
+
+
+
+
+
+
+
 
     public int saveHit(Point point) {
         // gennemløber alle skibe, og ser om punktet er indeholdt i dem,

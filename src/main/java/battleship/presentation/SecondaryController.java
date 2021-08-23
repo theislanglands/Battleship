@@ -271,6 +271,7 @@ public class SecondaryController {
         // placing shot
         shotValue = App.game.placeShot(COMPUTER, chosenPoint);
 
+
         if (shotValue == Board.EMPTY || shotValue == Board.SHIP) {
             // update label
             updateLabel(leftStatusLabel, shotValue);
@@ -294,7 +295,7 @@ public class SecondaryController {
         System.out.println("computer Turn");
 
         // Computer's turn
-        chosenPoint = App.game.player[COMPUTER].aiShot(App.game.player[PLAYER].getBoard());
+        chosenPoint = App.game.player[COMPUTER].aiShot(App.game.player[PLAYER].getBoard(), App.game.player[PLAYER].longestShipLength());
 
         computerShotPointLabel.setText("computer shoots at " + BattleshipGame.transformToCoordinate(chosenPoint));
 

@@ -132,6 +132,26 @@ public class BattleshipGame {
             System.out.println("**  BANG  **");
             player[playerNr].getBoard().setValue(shotPoint, Board.HIT);
         }
+
+        if (playerNr == 1) {
+            int x = shotPoint.x;
+            int y = shotPoint.y;
+
+            shotPoint = new Point(x,y);
+            System.out.println("UP " + player[1].checkNeighbour(player[1].getBoard(), shotPoint, 3,-1,0));
+
+            shotPoint = new Point(x,y);
+            System.out.println("DOWN " + player[1].checkNeighbour(player[1].getBoard(), shotPoint, 3,1,0));
+
+            shotPoint = new Point(x,y);
+            System.out.println("LEFT " + player[1].checkNeighbour(player[1].getBoard(), shotPoint, 3,0,-1));
+
+            shotPoint = new Point(x,y);
+            System.out.println("RIGHT " + player[1].checkNeighbour(player[1].getBoard(), shotPoint, 3,0,1));
+
+
+
+        }
         return shotValue;
     }
 
@@ -183,4 +203,5 @@ public class BattleshipGame {
     public void setAiLevel(int aiLevel) {
         aiLevel = aiLevel;
     }
+
 }
