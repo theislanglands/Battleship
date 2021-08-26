@@ -22,6 +22,8 @@ public class App extends Application {
     public static Image[] cellImage = new Image[10];
     public static Image cursor;
 
+    private static int gameSpeed = 3;
+
     // TODO set pic size according to gridSize
 
 
@@ -30,6 +32,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
 
         initializeCellImages();
+        Sounds.initializeSounds();
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("Battleship_settings.fxml"));
         scene = new Scene(fxmlLoader.load(), 1024, 768);
         stage.setTitle("Battleship");
@@ -75,5 +78,13 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    public static int getGameSpeed() {
+        return gameSpeed;
+    }
+
+    public static void setGameSpeed(int gameSpeed) {
+        App.gameSpeed = gameSpeed;
     }
 }

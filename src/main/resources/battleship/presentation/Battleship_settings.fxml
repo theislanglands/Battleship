@@ -11,14 +11,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="battleship.presentation.BattleshipSettingsController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="battleship.presentation.BattleshipSettingsController">
    <children>
       <Label alignment="CENTER" prefHeight="132.0" prefWidth="1024.0" text="Battleships Settings" textAlignment="CENTER">
          <font>
             <Font size="34.0" />
          </font>
       </Label>
-      <HBox prefHeight="50.0" prefWidth="200.0">
+      <HBox prefHeight="50.0" prefWidth="200.0" visible="false">
          <children>
             <Label prefWidth="180.0" text="Player name">
                <font>
@@ -32,39 +32,52 @@
             </TextField>
          </children>
       </HBox>
-      <HBox prefWidth="600.0">
+      <HBox alignment="CENTER" prefWidth="600.0">
          <children>
-            <Label prefWidth="180.0" text="AI Intelligence">
+            <Label alignment="TOP_LEFT" prefWidth="180.0" text="AI Intelligence">
                <font>
                   <Font size="21.0" />
                </font>
             </Label>
-            <Slider fx:id="aiSlider" blockIncrement="1.0" majorTickUnit="1.0" max="5.0" minorTickCount="0" prefHeight="38.0" prefWidth="340.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="4.0" />
+            <Slider fx:id="aiSlider" blockIncrement="1.0" majorTickUnit="1.0" max="5.0" minorTickCount="0" prefHeight="38.0" prefWidth="340.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="4.0">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin></Slider>
          </children>
       </HBox>
-      <HBox prefHeight="51.0" prefWidth="200.0">
+      <HBox alignment="CENTER" prefHeight="51.0" prefWidth="200.0">
          <children>
-            <Label prefWidth="180.0" text="Music Level">
+            <Label alignment="TOP_LEFT" prefWidth="180.0" text="Music Level">
                <font>
                   <Font size="21.0" />
                </font>
             </Label>
-            <Slider fx:id="musicLevelSlider" blockIncrement="1.0" majorTickUnit="2.0" max="10.0" minorTickCount="1" prefHeight="38.0" prefWidth="340.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="6.0" />
+            <Slider fx:id="musicLevelSlider" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" prefHeight="38.0" prefWidth="340.0" showTickLabels="true" showTickMarks="true" value="6.0" />
          </children>
       </HBox>
-      <HBox prefHeight="51.0" prefWidth="200.0">
+      <HBox alignment="CENTER" prefHeight="51.0" prefWidth="200.0">
          <children>
-            <Label prefWidth="180.0" text="Sound FX">
+            <Label alignment="TOP_LEFT" prefWidth="180.0" text="Sound FX">
                <font>
                   <Font size="21.0" />
                </font>
             </Label>
-            <Slider fx:id="soundFxSlider" blockIncrement="1.0" majorTickUnit="2.0" max="10.0" minorTickCount="1" prefHeight="51.0" prefWidth="340.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="6.0" />
+            <Slider fx:id="soundFxSlider" blockIncrement="0.2" majorTickUnit="1.0" max="10.0" minorTickCount="1" onMouseReleased="#changeSoundFxVolumeHandler" prefHeight="38.0" prefWidth="340.0" showTickLabels="true" value="4.0" />
          </children>
       </HBox>
-      <HBox prefHeight="51.0" prefWidth="200.0">
+      <HBox alignment="CENTER" prefWidth="600.0">
          <children>
-            <Label prefWidth="180.0" text="Grid Size">
+            <Label alignment="TOP_LEFT" prefWidth="180.0" text="Gamespeed">
+               <font>
+                  <Font size="21.0" />
+               </font>
+            </Label>
+            <Slider fx:id="gamespeedSlider" blockIncrement="1.0" majorTickUnit="1.0" max="5.0" min="1.0" minorTickCount="0" prefHeight="38.0" prefWidth="340.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="3.0" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="51.0" prefWidth="200.0">
+         <children>
+            <Label alignment="TOP_LEFT" prefWidth="180.0" text="Grid Size">
                <font>
                   <Font size="21.0" />
                </font>
@@ -72,23 +85,47 @@
             <Slider fx:id="gridSizeSlider" blockIncrement="2.0" majorTickUnit="2.0" max="20.0" min="8.0" minorTickCount="0" prefHeight="38.0" prefWidth="340.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="10.0" />
          </children>
       </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Label prefWidth="180.0" text="Fleet Size">
+            <Label alignment="TOP_LEFT" prefWidth="180.0" text="Fleet Size">
                <font>
                   <Font size="21.0" />
                </font>
             </Label>
-            <HBox prefHeight="100.0" prefWidth="337.0">
+            <HBox prefHeight="38.0" prefWidth="337.0">
                <children>
                   <RadioButton fx:id="radio4btn" mnemonicParsing="false" text="4">
                      <toggleGroup>
                         <ToggleGroup fx:id="fleetSizeGroup" />
                      </toggleGroup>
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets right="25.0" />
+                     </padding>
                   </RadioButton>
-                  <RadioButton fx:id="radio5Btn" mnemonicParsing="false" selected="true" text="5" toggleGroup="$fleetSizeGroup" />
-                  <RadioButton fx:id="radio7btn" mnemonicParsing="false" text="7" toggleGroup="$fleetSizeGroup" />
-                  <RadioButton fx:id="radio10btn" mnemonicParsing="false" text="10" toggleGroup="$fleetSizeGroup" />
+                  <RadioButton fx:id="radio5Btn" mnemonicParsing="false" selected="true" text="5" toggleGroup="$fleetSizeGroup">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets right="25.0" />
+                     </padding></RadioButton>
+                  <RadioButton fx:id="radio7btn" mnemonicParsing="false" text="7" toggleGroup="$fleetSizeGroup">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets right="25.0" />
+                     </padding></RadioButton>
+                  <RadioButton fx:id="radio10btn" mnemonicParsing="false" text="10" toggleGroup="$fleetSizeGroup">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets right="25.0" />
+                     </padding></RadioButton>
                </children>
             </HBox>
          </children>
@@ -108,4 +145,7 @@
          </children>
       </HBox>
    </children>
+   <padding>
+      <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+   </padding>
 </VBox>

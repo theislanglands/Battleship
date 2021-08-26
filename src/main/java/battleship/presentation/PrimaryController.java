@@ -33,7 +33,7 @@ public class PrimaryController {
     public TilePane board;
     ImageView[][] boardContent = new ImageView[BattleshipGame.gridSize][BattleshipGame.gridSize];
 
-    int picSize = 35;
+    int picSize = 45 - gridSize;;
     Image shipCursor;
     private int selectedShip = -1;
     private int shipsPlaced = 0;
@@ -78,14 +78,15 @@ public class PrimaryController {
 
     @FXML
     private void switchToSecondary() throws IOException {
+        Sounds.play(Sounds.NOTIFICATION);
         App.setRoot("Secondary");
     }
 
     @FXML
     public void quitBtnHandler(ActionEvent actionEvent) {
+        Sounds.play(Sounds.CLICK);
         System.exit(0);
     }
-
 
     private void initializeBoard() {
 
@@ -141,7 +142,7 @@ public class PrimaryController {
 
         // TODO: check om skib allerede er placeret!
 
-        // checker om der allerede er valgt skib!
+        // hvis der ikke allerede er valgt et skib
         if (selectedShip == -1) {
 
             // finder Node der er klikket på
@@ -164,14 +165,18 @@ public class PrimaryController {
             // getting ship as Image
             shipCursor = shipsHBox[selectedShip].snapshot(new SnapshotParameters(), null);
             // setting cursor to shipCursor
-            App.getScene().setCursor(new ImageCursor(shipCursor));
+            App.getScene().setCursor(new ImageCursor(shipCursor,(gridSize/2),(gridSize/2)));
             // hiding selected ship
             shipsHBox[selectedShip].setVisible(false);
+
+            // playing clicksound
+            Sounds.play(Sounds.CLICK);
         }
     }
 
     public void flipShipOrientation(){
-        
+
+        // TODO: bug in rotation of even numbered ships - go back to original if horisontal
         if (selectedShip != -1) {
             App.game.player[0].getShip()[selectedShip].flipOrientation();
 
@@ -181,7 +186,7 @@ public class PrimaryController {
             iw.setRotate(90);
             Image rotatedCursor = iw.snapshot(new SnapshotParameters(), null);
             shipCursor = rotatedCursor;
-            App.getScene().setCursor(new ImageCursor(shipCursor));
+            App.getScene().setCursor(new ImageCursor(shipCursor,(gridSize/2),(gridSize/2)));
         }
     }
     private Image makeTransparent(Image inputImage) {
@@ -219,14 +224,16 @@ public class PrimaryController {
 
         // check if flip!
         if (pressedKey.equalsIgnoreCase("f")) {
+            Sounds.play(Sounds.CLICK);
             flipShipOrientation();
         }
 
         // chick if r
         if (pressedKey.equalsIgnoreCase("r")) {
-            System.out.println("random ship placement");
             App.game.player[0].randomShipPlacement();
+            App.getScene().setCursor(Cursor.DEFAULT);
             switchToSecondary();
+
 
         }
     }
@@ -245,7 +252,13 @@ public class PrimaryController {
 
             // TODO : lave metode i battleship game til det her!
             // check if able to place
-            if (App.game.player[0].getShip()[selectedShip].canPlace(chosenPoint, App.game.player[0].getBoard())) {
+            boolean canPlace = App.game.player[0].getShip()[selectedShip].canPlace(chosenPoint, App.game.player[0].getBoard());
+
+            if (!canPlace) {
+                Sounds.play(Sounds.ERROR);
+            }
+
+            if (canPlace) {
                 System.out.println("can place");
 
                 // PLacing ship
@@ -264,11 +277,13 @@ public class PrimaryController {
                 // updating placement count
                 shipsPlaced++;
 
-                // chcking if all ships are placed
+                // checking if all ships are placed
                 if (shipsPlaced == noOfShips) {
                     switchToSecondary();
                 }
 
+                // click sound
+                Sounds.play(Sounds.CLICK);
             }
         }
     }

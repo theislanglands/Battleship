@@ -3,39 +3,54 @@ package battleship.presentation;
 import battleship.domain.BattleshipGame;
 import battleship.domain.Board;
 import battleship.domain.Player;
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.*;
 import javafx.scene.Cursor;
-import javafx.scene.ImageCursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 import java.awt.*;
 import java.io.IOException;
 
 public class SecondaryController {
 
+    public Label headerText;
     public Label gameLabel;
     public Label leftStatusLabel;
     public Label computerShotPointLabel;
     public Label rightStatusLabel;
-    public Button quitBtn;
     public Label mainStatusLabel;
+    public Label hitLabel;
+
+    public Button quitBtn;
+    public Button saveBtn;
+    public Button settingsBtn;
+
+
+    // pop up
+    public final Stage endDialogStage = new Stage();
+    Scene popUpScene = null;
+    public Button yesBtn;
+    public Button noBtn;
 
 
     int gridSize = App.game.getGridSize();
-    int leftPicSize = 35;
-    int rightPicSize = 35;
+    int leftPicSize = 45 - gridSize;
+    int rightPicSize = 45 - gridSize - 5;
     public Point chosenPoint = null;
 
-    public static Image[] cellImage = new Image[10];
     ImageView[][] leftContent = new ImageView[gridSize][gridSize];
     ImageView[][] rightContent = new ImageView[gridSize][gridSize];
 
@@ -43,10 +58,11 @@ public class SecondaryController {
     final int COMPUTER = 1;
     final int PLAYER = 0;
 
-    ImageCursor ship_cursor = new ImageCursor(App.cursor,16,16);
+    ImageCursor ship_cursor = new ImageCursor(App.cursor, 16, 16);
 
 
     int playerTurn = 0;
+    // holds the ship_nr of recent sunk ship, -1 if none
     int sunkenShip = -1;
     int shotValue;
 
@@ -57,12 +73,8 @@ public class SecondaryController {
     @FXML
     TilePane leftGrid = new TilePane();
 
-
     @FXML
     public void initialize() {
-
-        // loading images
-
         // setting size of board
         initializeBoardSize(leftPicSize, gridSize, leftGrid);
         initializeBoardSize(rightPicSize, gridSize, rightGrid);
@@ -73,6 +85,15 @@ public class SecondaryController {
         // generating random ships for left
         updateRightBoard(App.game.player[PLAYER].getBoard());
         updateLeftBoard(App.game.player[COMPUTER].getBoard());
+
+        App.game.increaseRoundCount();
+
+        endDialogStage.initModality(Modality.WINDOW_MODAL);
+        endDialogStage.setAlwaysOnTop(true);
+        endDialogStage.setResizable(false);
+        endDialogStage.initStyle(StageStyle.UNDECORATED);
+
+
     }
 
     public void quitBtnHandler(ActionEvent actionEvent) {
@@ -206,11 +227,6 @@ public class SecondaryController {
     }
 
     @FXML
-    private void switchToPrimary() throws IOException {
-        App.setRoot("Primary");
-    }
-
-    @FXML
     public void clickOnBoard(MouseEvent mouseEvent) {
 
         if (playerTurn == PLAYER) {
@@ -220,65 +236,163 @@ public class SecondaryController {
             chosenPoint = new Point(row, col);
             System.out.println(chosenPoint);
             mainStatusLabel.setText("");
-            gameLabel.setText("You shoot at: " + BattleshipGame.transformToCoordinate(chosenPoint));
+            mainStatusLabel.setText("You shoot at: " + BattleshipGame.transformToCoordinate(chosenPoint));
             playerTurn();
         }
     }
 
-    public void updateLabel (Label label, int shotValue) {
+    public void updateLabel(Label label, int shotValue) {
         // updating label according to shot value
-        switch(shotValue) {
+        switch (shotValue) {
             case Board.EMPTY:
                 label.setText("-- Miss --");
+                hitLabel.setText(label.getText());
                 break;
             case Board.SHIP:
                 label.setText("-- Hit --");
+                hitLabel.setText(label.getText());
                 break;
         }
     }
 
-    public void changePlayer(){
+    public void changePlayer() {
 
-        // checker om der er en vinder
-        if (App.game.getWinner() != -1) {
-            endGame();
-        }
+        int waitingTime;
+
+        leftGrid.setMouseTransparent(true);
 
         if (playerTurn == COMPUTER) {
-            playerTurn = PLAYER;
-            System.out.println("Player turn");
-
+            waitingTime = 0;
         } else {
-            playerTurn = Player.COMPUTER;
-            computerTurn();
+            waitingTime = App.getGameSpeed();
         }
+
+        // if a ship is sunk - longer waitingtime
+        if (sunkenShip != -1) waitingTime = 5;
+
+        // make delay - // shorter with computer
+
+        // from computer to player - no waiting time
+        System.out.println("waiting time " + waitingTime);
+        PauseTransition pause = new PauseTransition(Duration.seconds(waitingTime));
+        pause.setOnFinished(new EventHandler<>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // waiting over!
+
+
+                // checker om der er en vinder
+                if (App.game.getWinner() != -1) {
+                    leftGrid.setMouseTransparent(true);
+                    Scene scene = leftGrid.getScene();
+                    quitBtn.setDisable(true);
+
+
+                    endGame();
+                }
+
+                if (App.game.getWinner() == -1) {
+                    // resetting sunkenShip
+                    sunkenShip = -1;
+                    if (playerTurn == COMPUTER) {
+                        playerTurn = PLAYER;
+                        leftGrid.setMouseTransparent(false);
+                        App.game.increaseRoundCount();
+                        headerText.setText("Battleships Round " + (App.game.getRound()));
+
+                    } else {
+                        playerTurn = Player.COMPUTER;
+                        computerTurn();
+                    }
+                }
+            }
+        });
+
+        pause.play();
+
+
     }
 
     private void endGame() {
         System.out.println("Game Over");
         if (App.game.getWinner() == PLAYER) {
+            Sounds.play(Sounds.NOTIFICATION);
             mainStatusLabel.setText("You have won");
+            hitLabel.setText("");
         }
         if (App.game.getWinner() == COMPUTER) {
+            Sounds.play(Sounds.NOTIFICATION);
             mainStatusLabel.setText("You have lost");
+            hitLabel.setText("");
         }
+
         leftGrid.setMouseTransparent(true);
+        saveBtn.setDisable(true);
+        quitBtn.setDisable(true);
+        settingsBtn.setDisable(true);
+
+
+        playAgainPopUp();
     }
 
-    public void playerTurn(){
+    private void playAgainPopUp() {
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("endGamePopUp.fxml"));
+
+        try {
+            popUpScene = new Scene(fxmlLoader.load(), 400, 200);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        endDialogStage.setTitle("GAME OVER");
+        endDialogStage.setScene(popUpScene);
+        endDialogStage.show();
+
+
+    }
+
+    public void endDialogHandler(ActionEvent actionEvent) {
+
+        Sounds.play(Sounds.CLICK);
+
+        if (actionEvent.getSource().equals(noBtn)) {
+            System.out.println("no btn");
+            // Platform.exit();
+            System.exit(0);
+        }
+
+        if (actionEvent.getSource().equals(yesBtn)) {
+
+            // closing popup - stage!
+            Stage stage = (Stage) yesBtn.getScene().getWindow();
+            stage.close();
+
+            // starting new game!
+            try {
+                App.setRoot("Battleship_settings");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void playerTurn() {
         // placing shot
         shotValue = App.game.placeShot(COMPUTER, chosenPoint);
-
 
         if (shotValue == Board.EMPTY || shotValue == Board.SHIP) {
             // update label
             updateLabel(leftStatusLabel, shotValue);
 
+            if (shotValue == Board.EMPTY) {
+                Sounds.play(Sounds.SPLASH);
+            }
             // check if sunken
             if (shotValue == Board.SHIP) {
-                Sounds.playBang();
+                Sounds.play(Board.SHIP);
                 sunkenShip = App.game.checkSunkenShip(COMPUTER, chosenPoint);
                 if (sunkenShip != -1) {
+                    Sounds.play(Sounds.SUNK);
                     mainStatusLabel.setText("You have sunk computers " + App.game.player[1].getShip()[sunkenShip].getName());
                 }
             }
@@ -286,26 +400,30 @@ public class SecondaryController {
             updateLeftBoard(App.game.player[1].getBoard());
             changePlayer();
         } else {
+            Sounds.play(Sounds.ERROR);
             mainStatusLabel.setText("You've allready shot at this point!");
         }
     }
 
     public void computerTurn() {
-        System.out.println("computer Turn");
-
         // Computer's turn
         chosenPoint = App.game.player[COMPUTER].aiShot(App.game.player[PLAYER].getBoard(), App.game.player[PLAYER].longestShipLength());
 
-        computerShotPointLabel.setText("Computer shoots at: " + BattleshipGame.transformToCoordinate(chosenPoint));
+        mainStatusLabel.setText("Computer shoots at: " + BattleshipGame.transformToCoordinate(chosenPoint));
 
         shotValue = App.game.placeShot(PLAYER, chosenPoint);
         updateLabel(rightStatusLabel, shotValue);
 
+        if (shotValue == Board.EMPTY) {
+            Sounds.play(Board.EMPTY);
+        }
+
         if (shotValue == Board.SHIP) {
-            Sounds.playBang();
+            Sounds.play(Board.SHIP);
             sunkenShip = App.game.checkSunkenShip(PLAYER, chosenPoint);
             if (sunkenShip != -1) {
                 mainStatusLabel.setText("Computer have sunk your " + App.game.player[PLAYER].getShip()[sunkenShip].getName());
+                Sounds.play(Sounds.SUNK);
                 App.game.player[COMPUTER].setAiStatus(0);
             }
         }
@@ -328,13 +446,13 @@ public class SecondaryController {
 
     @FXML
     public void saveBtnHandler(ActionEvent event) {
-        Sounds.playBang();
+        Sounds.play(Sounds.ERROR);
     }
 
-
-
-
+    @FXML
+    public void settingBtnHandler(ActionEvent event) {
+        Sounds.play(Sounds.ERROR);
+    }
 }
-
 
 // TODO: skriv sammen left & right grid med boolean left/right som argument
