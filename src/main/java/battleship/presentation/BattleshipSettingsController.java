@@ -1,6 +1,7 @@
 package battleship.presentation;
 
 import battleship.domain.BattleshipGame;
+import battleship.domain.Player;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -30,29 +31,20 @@ public class BattleshipSettingsController {
     @FXML
     public void startGameBtnHandler(ActionEvent event) throws IOException {
         Sounds.play(Sounds.CLICK);
-        // setting fleet & gridsize
+
+        // setting game paremeters
         int fleetsize = 0;
         if (radio4btn.isSelected()) fleetsize = 4;
         if (radio5Btn.isSelected()) fleetsize = 5;
         if (radio7btn.isSelected()) fleetsize = 7;
         if (radio10btn.isSelected()) fleetsize = 10;
         App.game = new BattleshipGame(fleetsize, (int)gridSizeSlider.getValue());
-
-        // setting name
-        App.game.player[0].setName(nameTextField.getText());
-
-        // setting ai-level
+        App.game.player[Player.PLAYER].setName(nameTextField.getText());
         App.game.setAiLevel((int) aiSlider.getValue());
-
-        // setting soundFxLevel
         Sounds.setSoundFxLevel((int) soundFxSlider.getValue()*10 );
+        App.setGameSpeed(5 - (int) gamespeedSlider.getValue());
 
-        // setting gameSpeed
-        int gameSpeed = (int) gamespeedSlider.getValue();
-        gameSpeed = 5 - gameSpeed;
-        App.setGameSpeed(gameSpeed);
-
-        App.setRoot("Primary");
+        App.setRoot("PlaceShips");
     }
 
     @FXML

@@ -24,7 +24,7 @@ import java.io.IOException;
 import static battleship.domain.BattleshipGame.gridSize;
 import static battleship.domain.BattleshipGame.noOfShips;
 
-public class PrimaryController {
+public class PlaceShipsController {
     // fleetbox
     public GridPane fleetBox;
     public HBox[] shipsHBox = new HBox[noOfShips];
@@ -33,16 +33,22 @@ public class PrimaryController {
     public TilePane board;
     ImageView[][] boardContent = new ImageView[BattleshipGame.gridSize][BattleshipGame.gridSize];
 
+    GraphicBoard graphicBoard;
+
     int picSize = 45 - gridSize;;
     Image shipCursor;
     private int selectedShip = -1;
     private int shipsPlaced = 0;
 
-
     @FXML
     public void initialize() {
         App.game.intilializeShips(App.game.getNoOfShips());
-        initializeBoard();
+
+        graphicBoard = new GraphicBoard(gridSize, picSize, boardContent, board);
+        graphicBoard.setOwner(Player.PLAYER);
+        graphicBoard.updateBoard();
+
+        // something needs done to this!
         fleetBox.setVgap(15);
         fleetBox.setHgap(15);
 
@@ -61,7 +67,7 @@ public class PrimaryController {
             // adding shiptiles to tilepane
             for (int j = 0; j < length; j++) {
                 // initializing boattile
-                ImageView boatTile = (new ImageView(App.cellImage[Board.SHIP]));
+                ImageView boatTile = (new ImageView(GraphicBoard.cellImage[Board.SHIP]));
                 boatTile.setFitHeight(picSize);
                 boatTile.setFitWidth(picSize);
                 // tilføjer skibs tile til tilepane
@@ -77,65 +83,15 @@ public class PrimaryController {
     }
 
     @FXML
-    private void switchToSecondary() throws IOException {
+    private void switchToGameplay() throws IOException {
         Sounds.play(Sounds.NOTIFICATION);
-        App.setRoot("Secondary");
+        App.setRoot("GamePlay");
     }
 
     @FXML
     public void quitBtnHandler(ActionEvent actionEvent) {
         Sounds.play(Sounds.CLICK);
         System.exit(0);
-    }
-
-    private void initializeBoard() {
-
-        //board.setPrefColumns(gridSize + 1);
-        // board.setPrefRows(gridSize + 1);
-        board.setMaxWidth(picSize * (gridSize + 1));
-        board.setMinWidth(picSize * (gridSize + 1));
-
-        // Drawing corner
-        ImageView corner = new ImageView(App.cellImage[Board.SHIP]);
-        corner.setFitHeight(picSize);
-        corner.setFitWidth(picSize);
-        board.getChildren().add(corner);
-
-        // Drawing numbers
-        for (int i = 1; i < gridSize + 1; i++) {
-            StackPane numbers = new StackPane();
-            ImageView addEmpty = new ImageView(App.cellImage[Board.EMPTY]);
-            addEmpty.setFitHeight(picSize);
-            addEmpty.setFitWidth(picSize);
-
-            String number = "" + i;
-            numbers.getChildren().add(addEmpty);
-            numbers.getChildren().add(new Label(number));
-            board.getChildren().add(numbers);
-        }
-
-        // Drawing Rows
-        for (int row = 0; row < gridSize; row++) {
-
-            // adding letter
-            StackPane numbers = new StackPane();
-            ImageView addEmpty = new ImageView(App.cellImage[Board.EMPTY]);
-            addEmpty.setFitHeight(picSize);
-            addEmpty.setFitWidth(picSize);
-
-            String letter = "" + (char) (65 + row);
-            numbers.getChildren().add(addEmpty);
-            numbers.getChildren().add(new Label(letter));
-            board.getChildren().add(numbers);
-
-            // adding empty fields
-            for (int column = 0; column < gridSize; column++) {
-                boardContent[row][column] = new ImageView(App.cellImage[Board.EMPTY]);
-                boardContent[row][column].setFitHeight(picSize);
-                boardContent[row][column].setFitWidth(picSize);
-                board.getChildren().add(boardContent[row][column]);
-            }
-        }
     }
 
     public void clickOnBoatHandler(MouseEvent mouseEvent) {
@@ -162,12 +118,13 @@ public class PrimaryController {
             System.out.println("Mouse clicked cell: " + colIndex + " And: " + selectedShip);
             // row index = selected ship
 
+
             // getting ship as Image
+
             shipCursor = shipsHBox[selectedShip].snapshot(new SnapshotParameters(), null);
-            // setting cursor to shipCursor
-            App.getScene().setCursor(new ImageCursor(shipCursor,(gridSize/2),(gridSize/2)));
-            // hiding selected ship
+            App.getScene().setCursor(new ImageCursor(shipCursor, (gridSize / 2), (gridSize / 2)));
             shipsHBox[selectedShip].setVisible(false);
+
 
             // playing clicksound
             Sounds.play(Sounds.CLICK);
@@ -189,52 +146,19 @@ public class PrimaryController {
             App.getScene().setCursor(new ImageCursor(shipCursor,(gridSize/2),(gridSize/2)));
         }
     }
-    private Image makeTransparent(Image inputImage) {
-
-        final int TOLERANCE_THRESHOLD = 0xFF;
-
-        int W = (int) inputImage.getWidth();
-        int H = (int) inputImage.getHeight();
-        WritableImage outputImage = new WritableImage(W, H);
-        PixelReader reader = inputImage.getPixelReader();
-        PixelWriter writer = outputImage.getPixelWriter();
-        for (int y = 0; y < H; y++) {
-            for (int x = 0; x < W; x++) {
-                int argb = reader.getArgb(x, y);
-
-                int r = (argb >> 16) & 0xFF;
-                int g = (argb >> 8) & 0xFF;
-                int b = argb & 0xFF;
-
-                if (r >= TOLERANCE_THRESHOLD
-                        && g >= TOLERANCE_THRESHOLD
-                        && b >= TOLERANCE_THRESHOLD) {
-                    argb &= 0x00FFFFFF;
-                }
-
-                writer.setArgb(x, y, argb);
-            }
-        }
-
-        return outputImage;
-    }
 
     public void keyPressed(KeyEvent keyEvent) throws IOException {
         String pressedKey = keyEvent.getText();
 
-        // check if flip!
         if (pressedKey.equalsIgnoreCase("f")) {
             Sounds.play(Sounds.CLICK);
             flipShipOrientation();
         }
 
-        // chick if r
         if (pressedKey.equalsIgnoreCase("r")) {
             App.game.player[0].randomShipPlacement();
             App.getScene().setCursor(Cursor.DEFAULT);
-            switchToSecondary();
-
-
+            switchToGameplay();
         }
     }
 
@@ -265,21 +189,18 @@ public class PrimaryController {
                 System.out.println("isHor " + App.game.player[0].getShip()[selectedShip].isHorizontal());
                 App.game.player[0].placeShip(selectedShip, chosenPoint);
 
-                // updating board
-                updateBoard();
+                graphicBoard.updateBoard();
 
                 // resetting selectedShip
                 selectedShip = -1;
 
-                // changing cursor to default
-                App.getScene().setCursor(Cursor.DEFAULT);
 
-                // updating placement count
+                App.getScene().setCursor(Cursor.DEFAULT);
                 shipsPlaced++;
 
                 // checking if all ships are placed
                 if (shipsPlaced == noOfShips) {
-                    switchToSecondary();
+                    switchToGameplay();
                 }
 
                 // click sound
@@ -287,15 +208,6 @@ public class PrimaryController {
             }
         }
     }
-
-    private void updateBoard() {
-        for (int row = 0; row < gridSize; row++) {
-            for (int column = 0; column < gridSize; column++) {
-
-                int valueAtPoint = App.game.player[Player.PLAYER].getBoard().getValue(new Point(row, column));
-
-                boardContent[row][column].setImage(App.cellImage[valueAtPoint]);
-            }
-        }
-    }
 }
+
+// TODO: use grid initializer from secondary controller!

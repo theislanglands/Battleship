@@ -1,7 +1,6 @@
 package battleship.domain;
 
 import java.awt.*;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

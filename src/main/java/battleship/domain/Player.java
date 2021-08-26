@@ -123,22 +123,16 @@ public class Player {
 
     public Point aiShot(Board playerBoard, int longestShipRemaining) {
 
-        System.out.println("aiStatus " + aiStatus);
-        System.out.println("aiLevel " + aiLevel);
+        System.out.println("ai: Level " + aiLevel + " Status: " + aiStatus);
         //System.out.println("longest ship " + longestShipRemaining);
-
 
         Point returnPoint = null;
         int shot;
 
-
         while (true) {
-            // System.out.println("ai " + aiStatus);
-
             switch (aiStatus) {
 
                 case 0:
-
                     // intet ramt, tilfældigt skud
                     // System.out.println("case 0");
 
@@ -446,7 +440,7 @@ public class Player {
                         returnPoints.clear();
                         returnPoints.add(p);
                         maxPossibleHit = possibleHitsAtPoint;
-                        System.out.println("new max pos hits:" + maxPossibleHit);
+                        // System.out.println("new max pos hits:" + maxPossibleHit);
                     }
                 }
             }
