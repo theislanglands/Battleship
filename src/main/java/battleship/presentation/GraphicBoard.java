@@ -4,6 +4,7 @@ import battleship.domain.Board;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 
@@ -15,6 +16,7 @@ import java.util.Set;
 public class GraphicBoard {
 
     public static Image[] cellImage = new Image[10];
+    public static Image aimCursor;
 
     int gridSize;
     int picSize;
@@ -38,20 +40,18 @@ public class GraphicBoard {
     }
 
     public void initializeCellImages() {
-        System.out.println(GraphicBoard.class.getResource("cursor_cell.png"));
+
 
         try {
             cellImage[Board.HIT] = new Image(getClass().getResource("hit_cell.png").toURI().toString());
             cellImage[Board.EMPTY] = new Image(getClass().getResource("empty_cell.png").toURI().toString());
             cellImage[Board.SHIP] = new Image(getClass().getResource("ship_cell.png").toURI().toString());
             cellImage[Board.MISS] = new Image(getClass().getResource("miss_cell.png").toURI().toString());
-            cellImage[5] = new Image(getClass().getResource("error_cell.png").toURI().toString());
-            cellImage[6] = new Image(getClass().getResource("cursor_cell.png").toURI().toString());
-            App.cursor = new Image(getClass().getResource("cursor_cell.png").toURI().toString());
-            // , leftPicSize, leftPicSize * 0.7, false, false
+            cellImage[Board.SUNK] = new Image(getClass().getResource("sunk_ship.png").toURI().toString());
+            aimCursor = new Image(getClass().getResource("cursor_cell.png").toURI().toString());
 
         } catch (URISyntaxException e) {
-            System.out.println("image files not found");
+            System.out.println("error loading image files");
             e.printStackTrace();
         }
     }
@@ -135,5 +135,19 @@ public class GraphicBoard {
 
     public void setOwner(int owner) {
         this.owner = owner;
+    }
+
+    public void createShipInPane(Pane pane, int length, int image, int picSize) {
+
+        // adding shiptiles to tilepane
+        for (int j = 0; j < length; j++) {
+            // initializing boattile
+            ImageView boatTile = (new ImageView(GraphicBoard.cellImage[image]));
+            boatTile.setFitHeight(picSize);
+            boatTile.setFitWidth(picSize);
+
+            // tilføjer skibs tile til tilepane
+            pane.getChildren().add(boatTile);
+        }
     }
 }

@@ -6,24 +6,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class App extends Application {
 
-    private static Scene scene;
     public static BattleshipGame game;
-
-    public static Image cursor;
-
+    private static Scene scene;
     private static int gameSpeed = 3;
-
-    // TODO set pic size according to gridSize
 
     @Override
     public void start(Stage stage) throws IOException {
-
         Sounds.initializeSounds();
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("Battleship_settings.fxml"));
         scene = new Scene(fxmlLoader.load(), 1024, 768);

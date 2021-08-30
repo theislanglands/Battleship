@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="mainVBox" alignment="CENTER" onKeyPressed="#keyPressed" prefHeight="768.0" prefWidth="1024.0" spacing="20.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="battleship.presentation.PlaceShipsController">
+<VBox fx:id="mainVBox" alignment="CENTER" onKeyPressed="#keyPressed" prefHeight="768.0" prefWidth="1024.0" spacing="20.0" style="-fx-background-color: lightblue;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="battleship.presentation.PlaceShipsController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -39,7 +39,7 @@
                      <Font size="21.0" />
                   </font>
                </Label>
-               <GridPane fx:id="fleetBox" alignment="CENTER" onMouseClicked="#clickOnBoatHandler" prefHeight="212.0" prefWidth="389.0">
+               <GridPane fx:id="fleetBox" alignment="CENTER" hgap="15.0" onMouseClicked="#clickOnBoatHandler" prefHeight="212.0" prefWidth="389.0" vgap="15.0">
                  <columnConstraints>
                    <ColumnConstraints fillWidth="false" halignment="LEFT" hgrow="NEVER" maxWidth="245.03076171875" minWidth="210.0" prefWidth="229.912841796875" />
                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="194.0" minWidth="80.0" prefWidth="119.587158203125" />

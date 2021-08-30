@@ -14,6 +14,7 @@ Board for battleship
 2 = ship hit
 3 = missed shot
 4 = plads rundt om skib hvor AI ikke skyder
+5 = sunk
  */
 
 
@@ -21,6 +22,8 @@ public class Board {
 
     private int gridSize;
     int[][] grid;
+    Cell[][] gred;
+
 
     // constants for fields in board status
     public final static int EMPTY = 0;
@@ -28,10 +31,12 @@ public class Board {
     public final static int HIT = 2;
     public final static int MISS = 3;
     public final static int AI = 4;
+    public final static int SUNK = 5;
 
     public Board() {
         this.gridSize = 10;
         grid = new int[gridSize][gridSize];
+        gred = new Cell[gridSize][gridSize];
     }
 
     public Board(int gridSize) {

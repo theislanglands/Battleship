@@ -38,7 +38,9 @@ public class BattleshipSettingsController {
         if (radio5Btn.isSelected()) fleetsize = 5;
         if (radio7btn.isSelected()) fleetsize = 7;
         if (radio10btn.isSelected()) fleetsize = 10;
+
         App.game = new BattleshipGame(fleetsize, (int)gridSizeSlider.getValue());
+
         App.game.player[Player.PLAYER].setName(nameTextField.getText());
         App.game.setAiLevel((int) aiSlider.getValue());
         Sounds.setSoundFxLevel((int) soundFxSlider.getValue()*10 );

@@ -52,6 +52,7 @@ public class BattleshipGame {
     }
 
     public void intilializeShips(int noOfShips) {
+        System.out.println("init ships noOfShips" + noOfShips);
         switch (noOfShips) {
             case 4:
                 ships.put("Battleship", 4);
@@ -61,7 +62,6 @@ public class BattleshipGame {
                 break;
 
             case 5:
-
                 ships.put("Carrier", 5);
                 ships.put("Battleship", 4);
                 ships.put("Cruiser", 3);
@@ -160,11 +160,13 @@ public class BattleshipGame {
         // if ship is sunk
         if (sunkenShip > -1) {
             System.out.println("You have sunk your opponents " + player[playerNr].getShip()[sunkenShip].getName());
+            player[playerNr].markAsSunk(sunkenShip);
+
             updateWinner();
 
             if (playerNr == Player.PLAYER) {
-                // fo marks not to shot around a ship
-                player[Player.PLAYER].aiMarkingsWhenSunk(sunkenShip);
+                // marks not to shot around a ship
+                player[Player.PLAYER].aiMarkings(sunkenShip);
                 player[Player.COMPUTER].setAiStatus(0);
             }
         }
