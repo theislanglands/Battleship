@@ -1,11 +1,9 @@
 package battleship.presentation;
 
 import battleship.domain.BattleshipGame;
-import battleship.domain.Board;
+import battleship.domain.Cell;
 import battleship.domain.Player;
 import javafx.animation.PauseTransition;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
@@ -16,7 +14,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -35,9 +32,7 @@ public class GamePlayController {
     public Label mainStatusLabel;
     public Label hitLabel;
     public Button quitBtn;
-    public Button saveBtn;
     public Button settingsBtn;
-    public TilePane enemyFleetTpn;
     public FlowPane enemyFleetFpn;
 
     int gridSize = App.game.getGridSize();
@@ -55,13 +50,12 @@ public class GamePlayController {
     ImageView[][] rightContent = new ImageView[gridSize][gridSize];
     GraphicBoard rightBoard;
 
-    // TODO change this according to pic size!
     ImageCursor aimCursor = new ImageCursor(GraphicBoard.aimCursor, 16, 16);
 
     int playerTurn = 0;
     int recentSunkenShip = -1;
     public Point chosenPoint = null;
-    int shotValue;
+    Cell shotValue;
 
 
     public void initialize() {
@@ -69,13 +63,13 @@ public class GamePlayController {
 
         // initializing grids
         leftBoard = new GraphicBoard(gridSize, leftPicSize, leftContent, leftGrid);
-        leftBoard.hide(Board.AI);
-        leftBoard.hide(Board.SHIP);
+        leftBoard.hide(Cell.AI);
+        leftBoard.hide(Cell.SHIP);
         leftBoard.setOwner(Player.COMPUTER);
         leftBoard.updateBoard();
 
         rightBoard = new GraphicBoard(gridSize, rightPicSize, rightContent, rightGrid);
-        rightBoard.hide(Board.AI);
+        rightBoard.hide(Cell.AI);
         rightBoard.setOwner(Player.PLAYER);
         rightBoard.updateBoard();
 
@@ -88,16 +82,16 @@ public class GamePlayController {
         int noOfShips = App.game.getNoOfShips();
         TilePane[] shipTpn = new TilePane[noOfShips];
         int length;
-        int shipTile;
+        Cell shipTile;
 
         for (int enemyShip = 0; enemyShip < noOfShips; enemyShip++) {
             length = App.game.player[Player.COMPUTER].getShip()[enemyShip].getLength();
             shipTpn[enemyShip] = new TilePane();
 
             if (App.game.player[Player.COMPUTER].getShip()[enemyShip].isSunk()) {
-                shipTile = Board.SUNK;
+                shipTile = Cell.SUNK;
             } else {
-                shipTile = Board.SHIP;
+                shipTile = Cell.SHIP;
             }
 
             rightBoard.createShipInPane(shipTpn[enemyShip], length, shipTile, 20);
@@ -140,31 +134,25 @@ public class GamePlayController {
         PauseTransition pause = new PauseTransition(Duration.seconds(waitingTime));
 
         // handler for pause finished
-        pause.setOnFinished(new EventHandler<>() {
-            @Override
-            public void handle(ActionEvent event) {
+        pause.setOnFinished(event -> {
 
-                // checker om der er en vinder
-                if (App.game.getWinner() != -1) {
-                    endGame();
-                } else {
+            // checker om der er en vinder
+            if (App.game.getWinner() != -1) {
+                endGame();
+            } else {
+                // changing player
+                // resetting sunkenShip
+                recentSunkenShip = -1;
 
-                    // changing player
+                if (playerTurn == PLAYER) {
+                    // enables shot on grid
+                    leftGrid.setMouseTransparent(false);
+                    App.game.increaseRoundCount();
+                    headerText.setText("Battleships Round " + (App.game.getRound()));
+                }
 
-                    // resetting sunkenShip
-                    recentSunkenShip = -1;
-
-                    if (playerTurn == PLAYER) {
-                        // enables shot on grid
-                        leftGrid.setMouseTransparent(false);
-                        // increases round counter
-                        App.game.increaseRoundCount();
-                        headerText.setText("Battleships Round " + (App.game.getRound()));
-                    }
-
-                    if (playerTurn == COMPUTER) {
-                        nextTurn();
-                    }
+                if (playerTurn == COMPUTER) {
+                    nextTurn();
                 }
             }
         });
@@ -184,13 +172,13 @@ public class GamePlayController {
         // getting value at chosenPoint (from opponents board)
         shotValue = App.game.placeShot(opponentPlayerNr, chosenPoint);
 
-        if (shotValue == Board.EMPTY) {
-            Sounds.play(Sounds.SPLASH);
+        if (shotValue == Cell.EMPTY) {
+            Sound.play(Sound.Type.SPLASH);
             hitLabel.setText("-- Miss --");
         }
 
-        if (shotValue == Board.SHIP) {
-            Sounds.play(Board.SHIP);
+        if (shotValue == Cell.SHIP) {
+            Sound.play(Sound.Type.BANG);
             hitLabel.setText("-- Hit --");
 
             // check if ship is sunken
@@ -198,7 +186,7 @@ public class GamePlayController {
 
             // if ship is sunken
             if (recentSunkenShip != -1) {
-                Sounds.play(Sounds.SUNK);
+                Sound.play(Sound.Type.SUNK);
 
                 if (playerTurn == PLAYER) {
                     mainStatusLabel.setText("You have sunk computers " + App.game.player[COMPUTER].getShip()[recentSunkenShip].getName());
@@ -211,7 +199,7 @@ public class GamePlayController {
             }
         }
 
-        if (shotValue == Board.EMPTY || shotValue == Board.SHIP) {
+        if (shotValue == Cell.EMPTY || shotValue == Cell.SHIP) {
 
             leftBoard.updateBoard();
             rightBoard.updateBoard();
@@ -219,14 +207,14 @@ public class GamePlayController {
             changePlayer();
 
         } else {
-            Sounds.play(Sounds.ERROR);
-            mainStatusLabel.setText("You've allready shot at this point!");
+            Sound.play(Sound.Type.ERROR);
+            mainStatusLabel.setText("You've already shot at this point!");
         }
     }
 
     private void endGame() {
         System.out.println("Game Over");
-        Sounds.play(Sounds.NOTIFICATION);
+        Sound.play(Sound.Type.NOTIFICATION);
         hitLabel.setVisible(false);
 
         if (App.game.getWinner() == PLAYER) {
@@ -274,22 +262,13 @@ public class GamePlayController {
     }
 
     @FXML
-    public void saveBtnHandler(ActionEvent event) {
-        Sounds.play(Sounds.ERROR);
-        new EndGamePopUpController();
-    }
-
-    @FXML
-    public void settingBtnHandler(ActionEvent event) {
-        Sounds.play(Sounds.ERROR);
+    public void settingBtnHandler() {
+        Sound.play(Sound.Type.ERROR);
         App.game.setWinner(1);
     }
 
     @FXML
-    public void quitBtnHandler(ActionEvent actionEvent) {
+    public void quitBtnHandler() {
         System.exit(0);
     }
 }
-
-// TODO: display enemy ships remaining
-// TODO: when a ship is sunk, make it red - new picture (Board.SUNK)

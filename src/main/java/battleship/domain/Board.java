@@ -1,72 +1,46 @@
 package battleship.domain;
 
 import java.awt.Point;
+import java.util.Arrays;
 
 /**
  * @author TheisLanglands
- */
-
-/*
-Board for battleship
-
-0 = empty
-1 = ship
-2 = ship hit
-3 = missed shot
-4 = plads rundt om skib hvor AI ikke skyder
-5 = sunk
  */
 
 
 public class Board {
 
     private int gridSize;
-    int[][] grid;
-    Cell[][] gred;
-
-
-    // constants for fields in board status
-    public final static int EMPTY = 0;
-    public final static int SHIP = 1;
-    public final static int HIT = 2;
-    public final static int MISS = 3;
-    public final static int AI = 4;
-    public final static int SUNK = 5;
-
-    public Board() {
-        this.gridSize = 10;
-        grid = new int[gridSize][gridSize];
-        gred = new Cell[gridSize][gridSize];
-    }
+    Cell[][] grid;
 
     public Board(int gridSize) {
         this.gridSize = gridSize;
-        grid = new int[gridSize][gridSize];
+        this.grid = new Cell[gridSize][gridSize];
+
+        for (int i = 0; i < gridSize; i++) {
+                Arrays.fill(this.grid[i], Cell.EMPTY);
+        }
     }
 
-    public int getValue(Point p) {
+    public Cell getValue(Point p) {
         return grid[p.x][p.y];
     }
 
-    public void setValue(Point p, int value) {
+    public void setValue(Point p, Cell value) {
         grid[p.x][p.y] = value;
     }
 
     public void clearBoard(){
-        this.grid = new int[gridSize][gridSize];
+        this.grid = new Cell[gridSize][gridSize];
+        for (int i = 0; i < gridSize; i++) {
+            Arrays.fill(this.grid[i], Cell.EMPTY);
+        }
     }
 
     public int getGridSize() {
         return gridSize;
     }
 
-    public void setGridSize(int gridSize) {
-        this.gridSize = gridSize;
-    }
-
-    public int[][] getGrid() {
-        return grid;
-    }
 
     public String printShipsAndHits(){
 
@@ -85,13 +59,13 @@ public class Board {
             for (int j = 0; j < gridSize; j++) {
                 symbol = " ";
 
-                if (grid[i][j] == SHIP) {
+                if (grid[i][j] == Cell.SHIP) {
                     symbol = "H";
                 }
-                if (grid[i][j] == HIT) {
+                if (grid[i][j] == Cell.HIT) {
                     symbol = "X";
                 }
-                if (grid[i][j] == MISS) {
+                if (grid[i][j] == Cell.MISS) {
                     symbol= "O";
                 }
 
@@ -107,7 +81,7 @@ public class Board {
         String result = "\t\t";
         String symbol;
 
-        // adds numbers
+        // add numbers
         for (int i = 1; i <= gridSize; i++) {
             result += (i + " ");
         }
@@ -119,10 +93,10 @@ public class Board {
             for (int j = 0; j < gridSize; j++) {
                 symbol = " ";
 
-                if (grid[i][j] == HIT) {
+                if (grid[i][j] == Cell.HIT) {
                     symbol = "X";
                 }
-                if (grid[i][j] == MISS) {
+                if (grid[i][j] == Cell.MISS) {
                     symbol= "O";
                 }
 
@@ -140,7 +114,7 @@ public class Board {
         // prints board
         String result = "\t\t";
 
-        // adds numbers
+        // add numbers
         for (int i = 1; i <= gridSize; i++) {
             result += (i + " ");
         }

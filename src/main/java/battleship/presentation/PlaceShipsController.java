@@ -1,9 +1,7 @@
 package battleship.presentation;
 
 import battleship.domain.BattleshipGame;
-import battleship.domain.Board;
 import battleship.domain.Player;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
@@ -30,7 +28,7 @@ public class PlaceShipsController {
     GraphicBoard graphicBoard;
     ImageView[][] boardContent = new ImageView[BattleshipGame.gridSize][BattleshipGame.gridSize];
 
-    int picSize = 45 - gridSize;;
+    int picSize = 45 - gridSize;
     private int selectedShip = -1;
     private int shipsPlaced = 0;
 
@@ -52,27 +50,13 @@ public class PlaceShipsController {
 
             // adding ship to fleetbox (GridPane)
             shipHBox[shipNr] = new HBox();
-            createShipInPane(shipHBox[shipNr], length);
+            graphicBoard.createShipInPane(shipHBox[shipNr], length);
 
             Label shipLabel = new Label(shipName);
             shipLabel.setFont(new Font(21));
 
             fleetBox.add(shipHBox[shipNr], 0, shipNr);
             fleetBox.add(shipLabel, 1, shipNr);
-        }
-    }
-    // TODO call from graphic board instead
-    public void createShipInPane(Pane pane, int length) {
-
-        // adding shiptiles to tilepane
-        for (int j = 0; j < length; j++) {
-            // initializing boattile
-            ImageView boatTile = (new ImageView(GraphicBoard.cellImage[Board.SHIP]));
-            boatTile.setFitHeight(picSize);
-            boatTile.setFitWidth(picSize);
-
-            // tilføjer skibs tile til tilepane
-            pane.getChildren().add(boatTile);
         }
     }
 
@@ -102,7 +86,7 @@ public class PlaceShipsController {
                 // hide's selected ship!
                 fleetBox.getChildren().get((selectedShip * 2)).setVisible(false);
 
-                Sounds.play(Sounds.CLICK);
+                Sound.play(Sound.Type.CLICK);
             }
         }
     }
@@ -117,10 +101,10 @@ public class PlaceShipsController {
         if (isHorizontal) newShipCursor = new HBox();
         if (!isHorizontal) newShipCursor = new VBox();
 
-        createShipInPane(newShipCursor, shipLength);
+        graphicBoard.createShipInPane(newShipCursor, shipLength);
         Image shipCursor = newShipCursor.snapshot(new SnapshotParameters(), null);
 
-        App.getScene().setCursor(new ImageCursor(shipCursor, (gridSize / 2), (gridSize / 2)));
+        App.getScene().setCursor(new ImageCursor(shipCursor, gridSize / 2, gridSize / 2));
     }
 
     public void placeShip(MouseEvent mouseEvent) throws IOException {
@@ -138,18 +122,18 @@ public class PlaceShipsController {
             // TODO : lave metode i battleship game til det her!
 
             // check if able to place
-            boolean canPlace = App.game.player[0].getShip()[selectedShip].canPlace(chosenPoint, App.game.player[0].getBoard());
+            boolean canPlace = App.game.player[Player.PLAYER].getShip()[selectedShip].canPlace(chosenPoint, App.game.player[Player.PLAYER].getBoard());
 
             if (!canPlace) {
-                Sounds.play(Sounds.ERROR);
+                Sound.play(Sound.Type.ERROR);
             }
 
             if (canPlace) {
-                App.game.player[0].placeShip(selectedShip, chosenPoint);
+                App.game.player[Player.PLAYER].placeShip(selectedShip, chosenPoint);
                 graphicBoard.updateBoard();
                 selectedShip = -1;
                 App.getScene().setCursor(Cursor.DEFAULT);
-                Sounds.play(Sounds.CLICK);
+                Sound.play(Sound.Type.CLICK);
                 shipsPlaced++;
 
                 if (shipsPlaced == noOfShips) {
@@ -165,7 +149,7 @@ public class PlaceShipsController {
         // Flip orientation of selected ship
         if (pressedKey.equalsIgnoreCase("f")) {
             if (selectedShip != -1) {
-                Sounds.play(Sounds.CLICK);
+                Sound.play(Sound.Type.CLICK);
                 App.game.player[Player.PLAYER].getShip()[selectedShip].flipOrientation();
                 setSelectedShipAsCursor();
             }
@@ -173,7 +157,7 @@ public class PlaceShipsController {
 
         // random ship placement
         if (pressedKey.equalsIgnoreCase("r")) {
-            App.game.player[0].randomShipPlacement();
+            App.game.player[Player.PLAYER].randomShipPlacement();
             App.getScene().setCursor(Cursor.DEFAULT);
             switchToGameplay();
         }
@@ -181,13 +165,13 @@ public class PlaceShipsController {
 
     @FXML
     private void switchToGameplay() throws IOException {
-        Sounds.play(Sounds.NOTIFICATION);
+        Sound.play(Sound.Type.NOTIFICATION);
         App.setRoot("GamePlay");
     }
 
     @FXML
-    public void quitBtnHandler(ActionEvent actionEvent) {
-        Sounds.play(Sounds.CLICK);
+    public void quitBtnHandler() {
+        Sound.play(Sound.Type.CLICK);
         System.exit(0);
     }
 }

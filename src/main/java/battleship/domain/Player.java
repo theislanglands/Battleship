@@ -40,7 +40,7 @@ public class Player {
     // Ai level 1 = clever when hit a boat, bot no 4'marks
     // Ai level 2 = clever when hit a boat, + 4 marks
     // ai level 3 = sometimes use intelligent random shot!
-    // ai level 4 = allways use intelligent random shot
+    // ai level 4 = always use intelligent random shot
 
     public Player(boolean human) {
         this.human = human;
@@ -61,7 +61,7 @@ public class Player {
     private void generateShips() {
         System.out.println("generate ships");
         System.out.println(BattleshipGame.ships);
-        // generating an array of ships based on the defenitions i BattleshipGame
+        // generating an array of ships based on the definitions i BattleshipGame
         int i = 0;
         for (String shipName : BattleshipGame.ships.keySet()) {
             System.out.println("shipname " + shipName);
@@ -85,7 +85,7 @@ public class Player {
 
             while (!shipPlaced) {
 
-                randomHor = (boolean) (Math.random() < 0.5);
+                randomHor = new Random().nextBoolean();
                 Point randomPoint = randomPoint();
 
                 // Sætter en random orientering
@@ -114,7 +114,7 @@ public class Player {
 
     public Point randomPoint() {
 
-        // vælger random parametre mlm 0 og str. på bræt og returnerer som Point
+        // Vælger random parametre mlm 0 og str. på bræt og returnerer som Point
         int randomX = (int) (Math.random() * board.getGridSize());
         int randomY = (int) (Math.random() * board.getGridSize());
         return new Point(randomX, randomY);
@@ -124,10 +124,9 @@ public class Player {
     public Point aiShot(Board playerBoard, int longestShipRemaining) {
 
         System.out.println("ai: Level " + aiLevel + " Status: " + aiStatus);
-        //System.out.println("longest ship " + longestShipRemaining);
 
         Point returnPoint = null;
-        int shot;
+        Cell shot;
 
         while (true) {
             switch (aiStatus) {
@@ -156,14 +155,14 @@ public class Player {
 
                     shot = playerBoard.getValue(returnPoint);
 
-                    if (shot == Board.SHIP) {
+                    if (shot == Cell.SHIP) {
                         lastHit = returnPoint;
                         if (aiLevel != 0) aiStatus = 1;
                     }
                     return returnPoint;
 
 
-                case 1:// Et skib lige ramt, og retning skal estableres
+                case 1:// Et skib lige ramt, og retning skal etableres
                     // System.out.println("case 1");
 
                     // skyder i tilfældig retning ud fra hit!
@@ -183,18 +182,18 @@ public class Player {
                         shot = playerBoard.getValue(returnPoint);
 
                         // if point is empty - keep shooting randomly around point (aiStatus = 1)
-                        if (shot == Board.EMPTY) {
+                        if (shot == Cell.EMPTY) {
                             return returnPoint;
                         }
 
-                        // if you hit a ship, you know that the ship i vertical, and you keep shootin UP (change aiStatus to 2)
-                        if (shot == Board.SHIP) {
+                        // if you hit a ship, you know that the ship i vertical, and you keep shooting UP (change aiStatus to 2)
+                        if (shot == Cell.SHIP) {
                             aiStatus = 2;
                             return returnPoint;
                         }
 
                         // if the point is a place you previously missed or AI calculated as not possible to place a ship.
-                        if (shot == Board.MISS || shot == Board.AI) {
+                        if (shot == Cell.MISS || shot == Cell.AI) {
                             break;
                         }
                     }
@@ -206,16 +205,16 @@ public class Player {
                         returnPoint = new Point(lastHit.x + 1, lastHit.y); // finder punkt 1 ned (x+1)
                         shot = playerBoard.getValue(returnPoint);
 
-                        if (shot == Board.EMPTY) {
+                        if (shot == Cell.EMPTY) {
                             return returnPoint;
                         }
 
-                        if (shot == Board.SHIP) {
+                        if (shot == Cell.SHIP) {
                             aiStatus = 3;
                             return returnPoint;
                         }
 
-                        if (shot == Board.MISS || shot == Board.AI) {
+                        if (shot == Cell.MISS || shot == Cell.AI) {
                             break;
                         }
                     }
@@ -228,16 +227,16 @@ public class Player {
                         returnPoint = new Point(lastHit.x, lastHit.y - 1);
                         shot = playerBoard.getValue(returnPoint);
 
-                        if (shot == Board.EMPTY) {
+                        if (shot == Cell.EMPTY) {
                             return returnPoint;
                         }
 
-                        if (shot == Board.SHIP) {
+                        if (shot == Cell.SHIP) {
                             aiStatus = 4;
                             return returnPoint;
                         }
 
-                        if (shot == Board.MISS || shot == Board.AI) {
+                        if (shot == Cell.MISS || shot == Cell.AI) {
                             break;
                         }
                     }
@@ -250,16 +249,16 @@ public class Player {
                         returnPoint = new Point(lastHit.x, lastHit.y + 1); // finder punkt 1 th (y+1)
                         shot = playerBoard.getValue(returnPoint);
 
-                        if (shot == Board.EMPTY) {
+                        if (shot == Cell.EMPTY) {
                             return returnPoint;
                         }
 
-                        if (shot == Board.SHIP) {
+                        if (shot == Cell.SHIP) {
                             aiStatus = 5;
                             return returnPoint;
                         }
 
-                        if (shot == Board.MISS || shot == Board.AI) {
+                        if (shot == Cell.MISS || shot == Cell.AI) {
                             break;
                         }
                     }
@@ -283,21 +282,21 @@ public class Player {
 
                     shot = playerBoard.getValue(returnPoint); // finder værdi i 1 op (x-1)
 
-                    if (shot == Board.EMPTY) {
+                    if (shot == Cell.EMPTY) {
                         aiStatus = 3; // missed skud, prøv nedad næste gang
                         return returnPoint;
                     }
 
-                    if (shot == Board.SHIP) { // fortsætte med at ramme næste skud i denne retning
+                    if (shot == Cell.SHIP) { // fortsætte med at ramme næste skud i denne retning
                         return returnPoint;
                     }
 
-                    if (shot == Board.HIT) { // hvis vi rammer et flet der allerede er ramt, er det fordi vi har vendt om og skal fortsætte i samme retning
+                    if (shot == Cell.HIT) { // hvis vi rammer et flet der allerede er ramt, er det fordi vi har vendt om og skal fortsætte i samme retning
                         lastHit.x = lastHit.x - 1;
                         break;
                     }
 
-                    if (shot == Board.MISS || shot == Board.AI) { // tidligere skudt, eller ikke en mulighed, prøv nedad!
+                    if (shot == Cell.MISS || shot == Cell.AI) { // tidligere skudt, eller ikke en mulighed, prøv nedad!
                         aiStatus = 3;
                         break;
                     }
@@ -313,21 +312,21 @@ public class Player {
                     returnPoint = new Point(lastHit.x + 1, lastHit.y);
                     shot = playerBoard.getValue(returnPoint);
 
-                    if (shot == Board.EMPTY) {
+                    if (shot == Cell.EMPTY) {
                         aiStatus = 2;
                         return returnPoint;
                     }
 
-                    if (shot == Board.SHIP) {
+                    if (shot == Cell.SHIP) {
                         return returnPoint;
                     }
 
-                    if (shot == Board.HIT) {
+                    if (shot == Cell.HIT) {
                         lastHit.x = lastHit.x + 1;
                         break;
                     }
 
-                    if (shot == Board.MISS || shot == Board.AI) {
+                    if (shot == Cell.MISS || shot == Cell.AI) {
                         aiStatus = 2;
                         break;
                     }
@@ -343,27 +342,27 @@ public class Player {
                     returnPoint = new Point(lastHit.x, lastHit.y - 1);
                     shot = playerBoard.getValue(returnPoint);
 
-                    if (shot == Board.EMPTY) {
+                    if (shot == Cell.EMPTY) {
                         aiStatus = 5;
                         return returnPoint;
                     }
 
-                    if (shot == Board.SHIP) {
+                    if (shot == Cell.SHIP) {
                         return returnPoint;
                     }
 
-                    if (shot == Board.HIT) {
+                    if (shot == Cell.HIT) {
                         lastHit.y = lastHit.y - 1;
                         break;
                     }
 
-                    if (shot == Board.MISS || shot == Board.AI) {
+                    if (shot == Cell.MISS || shot == Cell.AI) {
                         aiStatus = 5;
                         break;
                     }
 
 
-                case 5: // skib horisontalt -  sidste træf var højre
+                case 5: // skib horisontalt - sidste træf var højre
                     // System.out.println("case 5");
 
                     if (lastHit.y == board.getGridSize() - 1) {
@@ -375,21 +374,21 @@ public class Player {
 
                     shot = playerBoard.getValue(returnPoint);
 
-                    if (shot == Board.EMPTY) {
+                    if (shot == Cell.EMPTY) {
                         aiStatus = 4;
                         return returnPoint;
                     }
 
-                    if (shot == Board.SHIP) {
+                    if (shot == Cell.SHIP) {
                         return returnPoint;
                     }
 
-                    if (shot == Board.HIT) {
+                    if (shot == Cell.HIT) {
                         lastHit.y = lastHit.y + 1;
                         break;
                     }
 
-                    if (shot == Board.MISS || shot == Board.AI) {
+                    if (shot == Cell.MISS || shot == Cell.AI) {
                         aiStatus = 5;
                         break;
                     }
@@ -400,11 +399,15 @@ public class Player {
     private Point randomShot(Board playerBoard) {
         System.out.println("randomshot");
         Point returnPoint;
+        Cell shotValue;
+
         do {
             // skyder på tilfældigt punkt
             returnPoint = randomPoint();
             // henter værdien af tilfældigt punkt på spillers plade
-        } while (playerBoard.getValue(returnPoint) >= 2);
+            shotValue = playerBoard.getValue(returnPoint);
+        } while (!(shotValue == Cell.EMPTY || shotValue == Cell.SHIP));
+
         return returnPoint;
     }
 
@@ -424,8 +427,8 @@ public class Player {
 
                 Point p = new Point(row, column);
 
-                if (board.getValue(p) == Board.EMPTY ||
-                        board.getValue(p) == Board.SHIP
+                if (board.getValue(p) == Cell.EMPTY ||
+                        board.getValue(p) == Cell.SHIP
                 )
 
                 {
@@ -489,9 +492,8 @@ public class Player {
         return result;
     }
 
-
     public boolean checkNeighbour(Board board, Point checkPoint, int longestShip, int dx, int dy) {
-        // tjek i en retninge dx,dy ud fra punkt p om der er ls-1 tomme felter foran og en "barrierer på ls"
+        // tjek i en retning dx, dy ud fra punkt p om der er ls-1 tomme felter foran og en "barrierer på ls"
         // anvendes til intelligent Ai shot med status ai= 0 (random)
         // bruger rekursion
 
@@ -517,12 +519,12 @@ public class Player {
             }
 
             // returnerer true om det er hit, miss elle AI, ellers false
-            return board.getValue(point) >= 2;
+            return !(board.getValue(point) == Cell.EMPTY || board.getValue(point) == Cell.SHIP);
         }
 
         // hvis det er tomt eller skib felt, tjek næste
-        if (board.getValue(point) == Board.EMPTY
-                || board.getValue(point) == Board.SHIP) {
+        if (board.getValue(point) == Cell.EMPTY
+                || board.getValue(point) == Cell.SHIP) {
             return checkNeighbour(board, point, longestShip, dx, dy);
         } else {
             return false;
@@ -530,9 +532,9 @@ public class Player {
     }
 
     public int saveHit(Point point) {
-        // gennemløber alle skibe, og ser om punktet er indeholdt i dem,
+        // Gennemløber alle skibe, og ser om punktet er indeholdt i dem,
         // registrer hit på det der er ramt.
-        // returnerer skibsnummer hvis det er lige sunket
+        // Returnerer skibsnummer hvis det er lige sunket
         for (int i = 0; i < BattleshipGame.noOfShips; i++) {
             if (ship[i].updateHitCount(point)) {
                 return i;
@@ -548,7 +550,7 @@ public class Player {
         return true;
     }
 
-    public void aiMarkingsWhenSunk(int shipNr) {
+    public void aiMarkings(int shipNr) {
         if (aiLevel < 2) return;
 
         // indsætter 4'taller rundt om skib, der hvor der ikke er 3-taller
@@ -576,12 +578,22 @@ public class Player {
         }
     }
 
+    public void markAsSunk(int shipNr){
+        Point position = ship[shipNr].getPosition();
+        for (int i = 0; i < ship[shipNr].getLength(); i++) {
+            if (ship[shipNr].isHorizontal()) board.grid[position.x][position.y + i] = Cell.SUNK;
+            if (!ship[shipNr].isHorizontal()) board.grid[position.x + i][position.y] = Cell.SUNK;
+        }
+    }
+
+
+
     private void setAiIfEmpty(Point point) {
         if (point.x >= 0 && board.getGridSize() - 1 >= point.x &&
                 point.y >= 0 && point.y <= board.getGridSize() - 1) {
 
-            if (board.getValue(point) == 0) {
-                board.setValue(point, 4);
+            if (board.getValue(point) == Cell.EMPTY) {
+                board.setValue(point, Cell.AI);
             }
         }
     }
@@ -599,16 +611,8 @@ public class Player {
         return board;
     }
 
-    public void setBoard(Board board) {
-        this.board = board;
-    }
-
     public Ship[] getShip() {
         return ship;
-    }
-
-    public void setShip(Ship[] ship) {
-        this.ship = ship;
     }
 
     public int getAiStatus() {
@@ -619,16 +623,8 @@ public class Player {
         this.aiStatus = aiStatus;
     }
 
-    public Point getLastHit() {
-        return lastHit;
-    }
-
     public void setLastHit(Point lastHit) {
         this.lastHit = lastHit;
-    }
-
-    public int getAiLevel() {
-        return aiLevel;
     }
 
     public void setAiLevel(int aiLevel) {

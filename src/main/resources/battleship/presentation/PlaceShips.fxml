@@ -24,7 +24,7 @@
       <children>
          <VBox prefHeight="580.0" prefWidth="508.0">
             <children>
-               <Label fx:id="gameLabel" alignment="CENTER" contentDisplay="TOP" prefHeight="60.0" prefWidth="547.0" text="Place you ships" textAlignment="CENTER" wrapText="true">
+               <Label fx:id="gameLabel" alignment="CENTER" contentDisplay="TOP" prefHeight="60.0" prefWidth="547.0" text="Place your ships" textAlignment="CENTER" wrapText="true">
                   <font>
                      <Font size="21.0" />
                   </font>

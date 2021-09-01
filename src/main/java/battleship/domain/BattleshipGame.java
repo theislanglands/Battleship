@@ -9,7 +9,6 @@ public class BattleshipGame {
     public static Map<String, Integer> ships = new LinkedHashMap<>();
     public static int noOfShips;
     public static int gridSize;
-    private int aiLevel = 1;
 
     private int round = 0;
     public Player[] player = new Player[2];
@@ -26,19 +25,10 @@ public class BattleshipGame {
 
     public static Point transformToPoint(String input) {
         // Omregner input ex b4 til et Point objekt
-
         int xPos, yPos;
 
-        // beregner x-Pos
         input = input.toUpperCase();
         xPos = -65 + (int) input.charAt(0);
-
-        /*
-        // beregner y-pos
-        if (input.length() == 4) yPos = 9; // ved 10!
-        else yPos = (int) -49 + input.charAt(1);
-        */
-
         yPos = Integer.parseInt(input.substring(1,2));
 
         return new Point(xPos, yPos);
@@ -52,6 +42,8 @@ public class BattleshipGame {
     }
 
     public void intilializeShips(int noOfShips) {
+        // TODO do somehing about thies, an enum with ship names & length
+        // SHIP length 1 could be named patrol!
         System.out.println("init ships noOfShips" + noOfShips);
         switch (noOfShips) {
             case 4:
@@ -95,8 +87,8 @@ public class BattleshipGame {
     }
 
     private void initializePlayers() {
-        player[0] = new Player(true);
-        player[1] = new Player(false);
+        player[Player.PLAYER] = new Player(true);
+        player[Player.COMPUTER] = new Player(false);
     }
 
     // GETTERS & SETTERS
@@ -116,40 +108,22 @@ public class BattleshipGame {
         round++;
     }
 
-    public int placeShot(int playerNr, Point shotPoint) {
+    public Cell placeShot(int playerNr, Point shotPoint) {
         //shot at player playerNr board at a given point
 
-        int shotValue = player[playerNr].getBoard().getValue(shotPoint);
+        Cell shotValue = player[playerNr].getBoard().getValue(shotPoint);
 
-        if (shotValue == Board.EMPTY) {
+        if (shotValue == Cell.EMPTY) {
             System.out.println("**  SPLASH!!  **");
-            player[playerNr].getBoard().setValue(shotPoint, Board.MISS);
+            player[playerNr].getBoard().setValue(shotPoint, Cell.MISS);
         }
 
         // tjekker om der rammes
-        if (shotValue == Board.SHIP) {
+        if (shotValue == Cell.SHIP) {
             System.out.println("**  BANG  **");
-            player[playerNr].getBoard().setValue(shotPoint, Board.HIT);
-        }
-/*
-        if (playerNr == 1) {
-            int x = shotPoint.x;
-            int y = shotPoint.y;
-
-            shotPoint = new Point(x,y);
-            System.out.println("UP " + player[1].checkNeighbour(player[1].getBoard(), shotPoint, 3,-1,0));
-
-            shotPoint = new Point(x,y);
-            System.out.println("DOWN " + player[1].checkNeighbour(player[1].getBoard(), shotPoint, 3,1,0));
-
-            shotPoint = new Point(x,y);
-            System.out.println("LEFT " + player[1].checkNeighbour(player[1].getBoard(), shotPoint, 3,0,-1));
-
-            shotPoint = new Point(x,y);
-            System.out.println("RIGHT " + player[1].checkNeighbour(player[1].getBoard(), shotPoint, 3,0,1));
+            player[playerNr].getBoard().setValue(shotPoint, Cell.HIT);
         }
 
- */
         return shotValue;
     }
 
@@ -175,8 +149,8 @@ public class BattleshipGame {
     }
 
     public void updateWinner(){
-        if (player[0].allSunk()) winner = 1;
-        if (player[1].allSunk()) winner = 0;
+        if (player[Player.PLAYER].allSunk()) winner = 1;
+        if (player[Player.COMPUTER].allSunk()) winner = 0;
     }
 
     public int getWinner() {
@@ -195,12 +169,7 @@ public class BattleshipGame {
         BattleshipGame.gridSize = gridSize;
     }
 
-    public int getAiLevel() {
-        return aiLevel;
-    }
-
     public void setAiLevel(int aiLevel) {
-        aiLevel = aiLevel;
         player[Player.COMPUTER].setAiLevel(aiLevel);
     }
 

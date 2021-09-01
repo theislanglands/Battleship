@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="battleship.presentation.BattleshipSettingsController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" spacing="5.0" style="-fx-background-color: lightblue;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="battleship.presentation.BattleshipSettingsController">
    <children>
       <Label alignment="CENTER" prefHeight="132.0" prefWidth="1024.0" text="Battleships Settings" textAlignment="CENTER">
          <font>
@@ -52,7 +52,7 @@
                   <Font size="21.0" />
                </font>
             </Label>
-            <Slider fx:id="musicLevelSlider" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" prefHeight="38.0" prefWidth="340.0" showTickLabels="true" showTickMarks="true" value="6.0" />
+            <Slider fx:id="musicLevelSlider" blockIncrement="1.0" disable="true" majorTickUnit="1.0" max="10.0" minorTickCount="0" prefHeight="38.0" prefWidth="340.0" showTickLabels="true" showTickMarks="true" value="6.0" />
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="51.0" prefWidth="200.0">

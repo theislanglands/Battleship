@@ -1,7 +1,8 @@
 package battleship.presentation;
 
 import battleship.domain.BattleshipGame;
-import battleship.domain.Board;
+import battleship.domain.Cell;
+import battleship.domain.Player;
 
 import java.awt.*;
 import java.util.Scanner;
@@ -30,13 +31,13 @@ public class Cli {
         // henter og initialiserer spiller navn
         System.out.print("\nWhat is your name? ");
         input = keyboard.nextLine();
-        GAME.player[0].setName(input);
+        GAME.player[Player.PLAYER].setName(input);
     }
 
     private void placeShips() {
 
         // Help text for placing ships
-        System.out.println("\nhello " + GAME.player[0].getName() + "\n");
+        System.out.println("\nhello " + GAME.player[Player.PLAYER].getName() + "\n");
         System.out.println("Place your ships with position and v/h for vertical or horisontal\n "
                 + "ex: b4h, or type R for random placement");
 
@@ -51,10 +52,10 @@ public class Cli {
 
                 while (!validInput) {
 
-                    System.out.println(GAME.player[0].getBoard().printShipsAndHits());
+                    System.out.println(GAME.player[Player.PLAYER].getBoard().printShipsAndHits());
 
-                    System.out.print("\nPlace your " + GAME.player[0].getShip()[i].getName() +
-                            " with length " + GAME.player[0].getShip()[i].getLength() +
+                    System.out.print("\nPlace your " + GAME.player[Player.PLAYER].getShip()[i].getName() +
+                            " with length " + GAME.player[Player.PLAYER].getShip()[i].getLength() +
                             ": ");
 
                     input = keyboard.nextLine();
@@ -65,18 +66,18 @@ public class Cli {
                 if (input.equals("R")) {
                     // Placerer spillerens skibe tilfældigt
                     System.out.println("Placing all ships randomly");
-                    GAME.player[0].randomShipPlacement();
+                    GAME.player[Player.PLAYER].randomShipPlacement();
                     i = GAME.getNoOfShips();
                     break;
                 }
 
                 // sætter orientering på skib
-                GAME.player[0].getShip()[i].setHorizontal(HorizontalInput(input));
+                GAME.player[Player.PLAYER].getShip()[i].setHorizontal(HorizontalInput(input));
 
                 // Tjekker om skibet kan placeres
-                if (GAME.player[0].getShip()[i].canPlace(BattleshipGame.transformToPoint(input), GAME.player[0].getBoard())) {
+                if (GAME.player[Player.PLAYER].getShip()[i].canPlace(BattleshipGame.transformToPoint(input), GAME.player[Player.PLAYER].getBoard())) {
                     // placerer skib
-                    GAME.player[0].getShip()[i].place(GAME.player[0].getBoard(), BattleshipGame.transformToPoint(input), GAME.player[0].getShip()[i].isHorizontal());
+                    GAME.player[Player.PLAYER].getShip()[i].place(GAME.player[Player.PLAYER].getBoard(), BattleshipGame.transformToPoint(input), GAME.player[Player.PLAYER].getShip()[i].isHorizontal());
                     placedCorrect = true;
                 }
 
@@ -87,7 +88,7 @@ public class Cli {
             }
         }
 
-        System.out.println(GAME.player[0].getBoard().printShipsAndHits());
+        System.out.println(GAME.player[Player.PLAYER].getBoard().printShipsAndHits());
     }
 
     private int startRounds() {
@@ -98,8 +99,8 @@ public class Cli {
         while (winner == -1) {
             GAME.increaseRoundCount();
             playerTurn = (GAME.getRound() - 1) % 2;
-            int shotValue = 0;
-            Point shotPoint = null;
+            Cell shotValue;
+            Point shotPoint;
 
 
             System.out.println("Round " + GAME.getRound() + " "
@@ -108,9 +109,9 @@ public class Cli {
             // spillers tur
             if (playerTurn == 0) {
 
-                // Placerer skud menneske (metode i spiller?
+                // Placerer skud menneske (metode i spiller?)
                 System.out.println("Your Shots");
-                System.out.println(GAME.player[1].getBoard().printShots());
+                System.out.println(GAME.player[Player.COMPUTER].getBoard().printShots());
                 System.out.print("place your shot? ");
 
                 boolean correctShot = false;
@@ -135,29 +136,29 @@ public class Cli {
                     // henter status på punktet på modstanders bræt hvor der skydes
                     shotPoint = BattleshipGame.transformToPoint(input);
 
-                    //shotValue = GAME.player[1].getGrid().getValue(shotPoint);
+                    //shotValue = GAME.player[Player.COMPUTER].getGrid().getValue(shotPoint);
                     shotValue = GAME.placeShot(1, shotPoint);
 
                     // tjekker at der ikke er skudt før på punktet
-                    if (shotValue == Board.HIT || shotValue == Board.MISS) {
-                        System.out.print("\nError: You allready hit this point, try again: ");
+                    if (shotValue == Cell.HIT || shotValue == Cell.MISS) {
+                        System.out.print("\nError: You already hit this point, try again: ");
                     } else {
                         correctShot = true;
                     }
 
                     // tjekker om der rammes forbi
-                    if (shotValue == Board.EMPTY) {
+                    if (shotValue == Cell.EMPTY) {
                         System.out.println("**  SPLASH!!  **");
                     }
 
                     // tjekker om der rammes
-                    if (shotValue == Board.SHIP) {
+                    if (shotValue == Cell.SHIP) {
                         System.out.println("**  BANG  **");
 
                         // check sunken ship
-                        int sunkenShip = GAME.player[1].saveHit(shotPoint);
+                        int sunkenShip = GAME.player[Player.COMPUTER].saveHit(shotPoint);
                         if (sunkenShip > -1) {
-                            System.out.println("You have sunk your opponents " + GAME.player[1].getShip()[sunkenShip].getName());
+                            System.out.println("You have sunk your opponents " + GAME.player[Player.COMPUTER].getShip()[sunkenShip].getName());
                         }
                     }
                 }
@@ -167,47 +168,47 @@ public class Cli {
             // computer turn
             if (playerTurn == 1) {
 
-                shotPoint = GAME.player[1].aiShot(GAME.player[0].getBoard(), GAME.player[0].longestShipLength());
+                shotPoint = GAME.player[Player.COMPUTER].aiShot(GAME.player[Player.PLAYER].getBoard(), GAME.player[Player.PLAYER].longestShipLength());
 
                 System.out.println("Computer shoots at: " + BattleshipGame.transformToCoordinate(shotPoint));
 
-                shotValue = GAME.player[0].getBoard().getValue(shotPoint);
+                shotValue = GAME.player[Player.PLAYER].getBoard().getValue(shotPoint);
 
-                if (shotValue == Board.EMPTY) {
+                if (shotValue == Cell.EMPTY) {
                     System.out.println("** SPLASH!  **");
-                    GAME.player[0].getBoard().setValue(shotPoint, Board.MISS);
+                    GAME.player[Player.PLAYER].getBoard().setValue(shotPoint, Cell.MISS);
                 }
 
-                if (shotValue == Board.SHIP) {
+                if (shotValue == Cell.SHIP) {
                     System.out.println("** BANG!  **");
-                    GAME.player[0].getBoard().setValue(shotPoint, Board.HIT);
-                    GAME.player[1].setLastHit(shotPoint);
+                    GAME.player[Player.PLAYER].getBoard().setValue(shotPoint, Cell.HIT);
+                    GAME.player[Player.COMPUTER].setLastHit(shotPoint);
 
                     // indstil aiStatus ved første hit, og gemmer punktet!
-                    if (GAME.player[1].getAiStatus() == 0) {
-                        GAME.player[1].setAiStatus(1);
+                    if (GAME.player[Player.COMPUTER].getAiStatus() == 0) {
+                        GAME.player[Player.COMPUTER].setAiStatus(1);
                     }
 
-                    int sunkenShip = GAME.player[0].saveHit(shotPoint);
+                    int sunkenShip = GAME.player[Player.PLAYER].saveHit(shotPoint);
 
                     if (sunkenShip > -1) {
-                        System.out.println("You have sunk your opponents " + GAME.player[0].getShip()[sunkenShip].getName());
+                        System.out.println("You have sunk your opponents " + GAME.player[Player.PLAYER].getShip()[sunkenShip].getName());
                         // indstiller til random shot.
-                        GAME.player[1].setAiStatus(0);
+                        GAME.player[Player.COMPUTER].setAiStatus(0);
                         // skal indstille AI rund om skibet til 4!, hvis de ikke allerede er 3!
-                        GAME.player[0].aiMarkingsWhenSunk(sunkenShip);
+                        GAME.player[Player.PLAYER].aiMarkings(sunkenShip);
                     }
                 }
 
                 System.out.println("Your ships");
-                System.out.println(GAME.player[0].getBoard().printShipsAndHits());
+                System.out.println(GAME.player[Player.PLAYER].getBoard().printShipsAndHits());
 
 
             } // end computer turn
 
             // checker om der er en vinder
-            if (GAME.player[1].allSunk()) winner = 0;
-            if (GAME.player[0].allSunk()) winner = 1;
+            if (GAME.player[Player.COMPUTER].allSunk()) winner = 0;
+            if (GAME.player[Player.PLAYER].allSunk()) winner = 1;
         }
 
         return winner;

@@ -1,0 +1,30 @@
+INTERFACE & BattleshipGame
+- Lave interface til battleships domain.
+- oprette metoder i battleshipGame - så der ikke skal kaldes "dybt" i domæne laget fra GUI & CLI
+- flytte nogle af metoder fra CLI til BattleshipGame
+
+GUI
+- implementere settings pop-up
+- lave introskærm
+- lave outroskærm (end pop up!)
+- implementere musikafspilning
+- Deale med vinduestørrrelse og resize
+- lav CSS til gui med farver og knapper
+- evt baggrundsbillede til spil
+- lave ny aimCursor der ikke er skæv
+
+Settings
+- valg mellem forskellige typer spil, kombination af spilleplade og antal skibe, som illusteres grafisk
+
+Persistens
+- gemme spil undervejs
+- gemme settings fra spil til spil
+- evt gemme hi-score ud fra spiltype!
+
+Domain
+- xtra AI niveau, hvor der tages udgangspunkt i midten af et skib
+- Ændre måden at man opretter skibe på i Battleship domain - så det ikke er nødvendigt med fx. cruiser 1 og cruiser 2
+
+Diverse
+- Mulighed for valg af sprog
+- Mulighed for at to human-spillere kan spille mod hinanden (på to maskiner)

@@ -2,10 +2,8 @@ package battleship.presentation;
 
 import battleship.domain.BattleshipGame;
 import battleship.domain.Player;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
@@ -29,8 +27,8 @@ public class BattleshipSettingsController {
 
 
     @FXML
-    public void startGameBtnHandler(ActionEvent event) throws IOException {
-        Sounds.play(Sounds.CLICK);
+    public void startGameBtnHandler() throws IOException {
+        Sound.play(Sound.Type.CLICK);
 
         // setting game paremeters
         int fleetsize = 0;
@@ -43,20 +41,20 @@ public class BattleshipSettingsController {
 
         App.game.player[Player.PLAYER].setName(nameTextField.getText());
         App.game.setAiLevel((int) aiSlider.getValue());
-        Sounds.setSoundFxLevel((int) soundFxSlider.getValue()*10 );
+        Sound.setSoundFxLevel((int) soundFxSlider.getValue()*10 );
         App.setGameSpeed(5 - (int) gamespeedSlider.getValue());
 
         App.setRoot("PlaceShips");
     }
 
     @FXML
-    public void quitBtnHandler(ActionEvent event) {
-        Sounds.play(Sounds.CLICK);
+    public void quitBtnHandler() {
+        Sound.play(Sound.Type.CLICK);
         System.exit(0);
     }
 
-    public void changeSoundFxVolumeHandler(MouseEvent mouseEvent) {
-        Sounds.setSoundFxLevel((int) soundFxSlider.getValue()*10 );
-        Sounds.play(Sounds.SPLASH);
+    public void changeSoundFxVolumeHandler() {
+        Sound.setSoundFxLevel((int) soundFxSlider.getValue()*10 );
+        Sound.play(Sound.Type.SPLASH);
     }
 }

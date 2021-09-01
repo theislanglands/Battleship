@@ -5,8 +5,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -19,7 +17,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Sounds.initializeSounds();
+        Sound.initializeSounds();
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("Battleship_settings.fxml"));
         scene = new Scene(fxmlLoader.load(), 1024, 768);
         stage.setTitle("Battleship");
@@ -57,4 +55,4 @@ public class App extends Application {
     }
 }
 
-// TODO: set minimum hight and width of stage according to grids!
+// TODO: set minimum height and width of stage according to grids!

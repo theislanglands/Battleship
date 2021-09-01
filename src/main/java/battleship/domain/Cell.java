@@ -9,7 +9,7 @@ public enum Cell {
     SUNK(5);
 
     int BoardValue;
-    private Cell(int i) {
+    Cell(int i) {
         this.BoardValue = i;
     }
 }
